@@ -4,10 +4,8 @@
 % (which ends at Figure 8, Table 3, and Eq. (11)).
 \setcounter{figure}{8}\setcounter{table}{3}\setcounter{equation}{11}
 \setcounter{section}{0}\renewcommand{\thesection}{\Alph{section}}
-% \planned{...}: outline text for a part that is not written yet; remove the macro's uses before submission.
 \raggedbottom  % columns end where the text ends; the kit's \flushbottom stretched short paragraphs apart
 \renewcommand{\qedsymbol}{}  % no end-of-proof square; proofs end with a sentence
-\newcommand{\planned}[1]{{\color{blue!60!black}\textit{[Planned] #1}}}
 
 This supplementary material is organized as follows. \Cref{sec:supp-proofs} provides the derivations and proofs omitted from the main paper. \Cref{sec:supp-impl} lists the implementation details and hyperparameters. \Cref{sec:supp-exp} reports the sensitivity analysis and additional experiments.
 
@@ -251,7 +249,7 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
 \subsection{VideoRAG Implementation}
 \label{sec:supp-videorag}
 
-We build on the released code of VideoRAG~\cite{ren2025videorag}, with Qwen3-VL-8B~\cite{bai2025qwen3vl} in place of GPT-4o-mini and MiniCPM-V. For each question, the frames of the clips that VideoRAG retrieves form the candidate frames, and its retrieved text chunks enter the prompt within the token budget. The VideoRAG row splits the budget equally across these frames, whereas \name allocates it.
+VideoRAG~\cite{ren2025videorag} answers a question in two stages. Retrieval returns the clips relevant to the question, found through a knowledge graph built over clip captions and transcripts and through clip embeddings, and the text chunks most similar to the question. Generation then describes the retrieved clips with a VLM, and an LLM answers from these descriptions and the text chunks. We keep the retrieval and let the VLM answer directly from the frames of the retrieved clips, together with the text chunks, which count toward the token budget. The VideoRAG row splits the remaining budget equally across the frames, whereas \name allocates it. We run the released code with Qwen3-VL-8B~\cite{bai2025qwen3vl} in place of GPT-4o-mini and MiniCPM-V.
 
 \section{Additional Experiments}
 \label{sec:supp-exp}
@@ -285,7 +283,7 @@ We build on the released code of VideoRAG~\cite{ren2025videorag}, with Qwen3-VL-
 \subsection{Solver Efficiency}
 \label{sec:supp-solver}
 
-We compare iterative water-filling against two integer solvers, Gurobi~\cite{gurobi} and SCIP~\cite{scip}, which solve the discrete allocation problem to optimality, and against CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel}, which solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames and a time limit of 10 minutes. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--27$\times$ faster than Gurobi, while SCIP does not finish beyond 420 frames. Its objective stays within 0.04\% of the integer optimum.
+We compare iterative water-filling against two integer solvers, Gurobi~\cite{gurobi} and SCIP~\cite{scip}, which solve the discrete allocation problem to optimality, and against CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel}, which solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames and a time limit of 10 minutes. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi, while SCIP does not finish beyond 420 frames. The objective of iterative water-filling stays within 0.04\% of the integer optimum.
 
 \begin{table}[t]
   \centering
