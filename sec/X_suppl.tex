@@ -246,10 +246,35 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
   \label{tab:supp-hparams-ivl}
 \end{table}
 
-\subsection{VideoRAG Implementation}
-\label{sec:supp-videorag}
+\subsection{Answer Prompt}
+\label{sec:supp-prompt}
 
-VideoRAG~\cite{ren2025videorag} answers a question in two stages. Retrieval returns the clips relevant to the question, found through a knowledge graph built over clip captions and transcripts and through clip embeddings, and the text chunks most similar to the question. Generation then describes the retrieved clips with a VLM, and an LLM answers from these descriptions and the text chunks. We keep the retrieval and let the VLM answer directly from the frames of the retrieved clips, together with the text chunks, which count toward the token budget. The VideoRAG row splits the remaining budget equally across the frames, whereas \name allocates it. We run the released code with Qwen3-VL-8B~\cite{bai2025qwen3vl} in place of GPT-4o-mini and MiniCPM-V.
+All methods answer with the prompt below. Each shown frame is preceded by its timestamp, and on Video-MME the subtitles shown to the VLM precede the question. The prediction is the option letter with the highest probability.
+
+\smallskip
+\noindent\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\footnotesize
+\texttt{<4.0 seconds>} \textit{[frame]} \ \texttt{<12.0 seconds>} \textit{[frame]} \ \dots\\[2pt]
+\texttt{Subtitles of the video:} \textit{[subtitles]}\\[2pt]
+\texttt{Select the best answer to the following multiple-choice question based on the video. Respond with only the letter of the correct option.}\\[2pt]
+\texttt{Question:} \textit{[question]}\\
+\texttt{Options:}\\
+\texttt{A.} \textit{[option]}\ \ \texttt{B.} \textit{[option]}\ \ \dots\\[2pt]
+\texttt{The best answer is:}}}
+\smallskip
+
+\subsection{Baseline Implementations}
+\label{sec:supp-baselines}
+
+All baselines answer with the same VLM and prompt as \name. Wherever a baseline scores frames with an image--text encoder, it uses the same SigLIP~2 similarities as \name. On Video-MME, every baseline also receives the subtitles aligned with the frames it selects, counted within its token budget. Beyond this, each baseline is implemented as follows.
+
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\setlength{\topsep}{2pt}
+  \item \textbf{Uniform sampling}: evenly spaced frames with equal token counts.
+  \item \textbf{Top-K}: as described in the main paper.
+  \item \textbf{FOCUS}~\cite{zhu2026focus}: released code with its default settings.
+  \item \textbf{Q-Frame}~\cite{zhang2025qframe}: released code, keeping its own encoder, Long-CLIP~\cite{zhang2024longclip}, and scaling its three resolution tiers to fill the token budget.
+  \item \textbf{QuoTA}~\cite{luo2025quota}: released code with its default prompts and frame scorer.
+  \item \textbf{AdaAlloc}~\cite{an2026adaalloc}: re-implemented from its paper. Since it makes three VLM calls per question, we scale the token budget of each call so that its total compute matches the other methods, which changes its accuracy by at most 0.4 points.
+\end{itemize}
 
 \section{Additional Experiments}
 \label{sec:supp-exp}
