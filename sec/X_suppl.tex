@@ -249,18 +249,35 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
 \subsection{Answer Prompt}
 \label{sec:supp-prompt}
 
-All methods answer with the prompt below. Each shown frame is preceded by its timestamp, and on Video-MME the subtitles shown to the VLM precede the question. The prediction is the option letter with the highest probability.
+All methods answer with the prompt in \cref{fig:supp-prompt}. Each shown frame is preceded by its timestamp, and on Video-MME the subtitles shown to the VLM precede the question. The prediction is the option letter with the highest probability.
+
+\begin{figure}[t]
+\begin{tcolorbox}[colframe=gray, colback=white, colbacktitle=gray!10, coltitle=black,
+    boxrule=0.4mm, arc=1mm, left=4pt, right=4pt, top=3pt, bottom=3pt,
+    fonttitle=\bfseries\small, title={Prompt: Multiple-choice answering}]
+\small
+\textcolor{gray}{\textit{$\langle$4.0 seconds$\rangle$ [frame] \ $\langle$12.0 seconds$\rangle$ [frame] \ \dots}}
 
 \smallskip
-\noindent\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\footnotesize
-\texttt{<4.0 seconds>} \textit{[frame]} \ \texttt{<12.0 seconds>} \textit{[frame]} \ \dots\\[2pt]
-\texttt{Subtitles of the video:} \textit{[subtitles]}\\[2pt]
-\texttt{Select the best answer to the following multiple-choice question based on the video. Respond with only the letter of the correct option.}\\[2pt]
-\texttt{Question:} \textit{[question]}\\
-\texttt{Options:}\\
-\texttt{A.} \textit{[option]}\ \ \texttt{B.} \textit{[option]}\ \ \dots\\[2pt]
-\texttt{The best answer is:}}}
+Subtitles of the video: \textcolor{gray}{\textit{[subtitles]}}
+
 \smallskip
+Select the best answer to the following multiple-choice question based on the video. Respond with only the letter of the correct option.
+
+\smallskip
+Question: \textcolor{gray}{\textit{[question]}}\\
+Options:\\
+A. \textcolor{gray}{\textit{[option]}}\\
+B. \textcolor{gray}{\textit{[option]}}\\
+\textcolor{gray}{\dots}
+
+\smallskip
+The best answer is:
+\end{tcolorbox}
+\vspace{-2mm}
+\caption{Answer prompt shared by all methods. Gray italic text marks the inputs of each question.}
+\label{fig:supp-prompt}
+\end{figure}
 
 \subsection{Baseline Implementations}
 \label{sec:supp-baselines}
