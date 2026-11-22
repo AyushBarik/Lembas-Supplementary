@@ -265,14 +265,14 @@ All methods answer with the prompt below. Each shown frame is preceded by its ti
 \subsection{Baseline Implementations}
 \label{sec:supp-baselines}
 
-All baselines answer with the same VLM and prompt as \name. Wherever a baseline scores frames with an image--text encoder, it uses the same SigLIP~2 similarities as \name. On Video-MME, every baseline also receives the subtitles aligned with the frames it selects, counted within its token budget. Beyond this, each baseline is implemented as follows.
+We compare all methods under the same conditions, so that differences in accuracy come from which evidence each method selects and how it divides the token budget. All methods answer with the same VLM and prompt (\cref{sec:supp-prompt}) within the same token budget, and on Video-MME every baseline also receives the subtitles aligned with the frames it selects, counted within that budget. FOCUS and AdaAlloc score query--frame relevance with a generic image--text encoder, for which they use the same SigLIP~2 similarities as \name and Top-K. Q-Frame and QuoTA keep the scorers they release, Long-CLIP~\cite{zhang2024longclip} and a Qwen2-VL-2B judge, respectively. Beyond this, each baseline is implemented as follows.
 
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\setlength{\topsep}{2pt}
   \item \textbf{Uniform sampling}: evenly spaced frames with equal token counts.
   \item \textbf{Top-K}: as described in the main paper.
   \item \textbf{FOCUS}~\cite{zhu2026focus}: released code with its default settings.
-  \item \textbf{Q-Frame}~\cite{zhang2025qframe}: released code, keeping its own encoder, Long-CLIP~\cite{zhang2024longclip}, and scaling its three resolution tiers to fill the token budget.
-  \item \textbf{QuoTA}~\cite{luo2025quota}: released code with its default prompts and frame scorer.
+  \item \textbf{Q-Frame}~\cite{zhang2025qframe}: released code, with its three resolution tiers scaled to fill the token budget.
+  \item \textbf{QuoTA}~\cite{luo2025quota}: released code with its default prompts.
   \item \textbf{AdaAlloc}~\cite{an2026adaalloc}: re-implemented from its paper. Since it makes three VLM calls per question, we scale the token budget of each call so that its total compute matches the other methods, which changes its accuracy by at most 0.4 points.
 \end{itemize}
 
