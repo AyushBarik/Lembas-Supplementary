@@ -199,9 +199,9 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
 \subsection{Settings of \name}
 \label{sec:supp-settings}
 
-\Cref{tab:supp-hparams,tab:supp-hparams-ivl} list the settings of \name with Qwen3-VL-8B~\cite{bai2025qwen3vl} and InternVL3.5-4B~\cite{wang2025internvl35}, respectively. The two encoders score the relevance of frames and subtitles to the query. The token value parameter $\tau$ sets how quickly the value $v_i(b_i)=b_i/(b_i+\tau_i)$ of an item saturates with tokens, and is fitted by least squares to the validation measurements of the main paper. The subtitle weight $\beta$ scales the relevance of subtitles against that of frames, and the redundancy penalty $\eta$ weighs the similarity between items that both receive tokens. Iterative water-filling runs for $L$ iterations, each of which finds the token price $\lambda$ by bisection. In multi-turn conversations, the attention weight $\omega$ controls how much the VLM's attention refines the relevance of cached items. The token budget $B$ is not a fixed setting: it controls the compute of each experiment and is stated with each result.
+\Cref{tab:supp-hparams} lists the settings of \name, which are the same for Qwen3-VL-8B~\cite{bai2025qwen3vl} and InternVL3.5-4B~\cite{wang2025internvl35}. The two encoders score the relevance of frames and subtitles to the query. The token value parameter $\tau$ sets how quickly the value $v_i(b_i)=b_i/(b_i+\tau_i)$ of an item saturates with tokens, and is fitted by least squares to the validation measurements of the main paper. The subtitle weight $\beta$ scales the relevance of subtitles against that of frames, and the redundancy penalty $\eta$ weighs the similarity between items that both receive tokens. Iterative water-filling runs for $L$ iterations, each of which finds the token price $\lambda$ by bisection. In multi-turn conversations, the attention weight $\omega$ controls how much the VLM's attention refines the relevance of cached items. The token budget $B$ varies across experiments and is stated with each result.
 
-\begin{table}[t]
+\begin{table}[!htb]
   \centering
   \footnotesize
   \renewcommand{\arraystretch}{1.15}
@@ -211,39 +211,20 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
     \midrule
     Frame relevance encoder & SigLIP 2 (so400m-patch14-384)~\cite{siglip2} \\
     Subtitle relevance encoder & BGE (base-en-v1.5)~\cite{bge} \\
+    \addlinespace[3pt]
     Token value parameter $\tau_{\text{frame}}$ & 38 \\
     Token value parameter $\tau_{\text{text}}$ & 13.6 \\
     Subtitle weight $\beta$ & 0.5 \\
     Redundancy penalty $\eta$ & $2.67\times10^{-5}$ \\
+    \addlinespace[3pt]
     Iterations $L$ & 20 \\
     Bisection steps per iteration & 60 \\
-    Attention weight $\omega$ & 0.5 \\
+    \addlinespace[3pt]
+    Attention weight $\omega$ (multi-turn) & 0.5 \\
     \bottomrule
   \end{tabular}
-  \caption{Settings of \name with Qwen3-VL-8B.}
+  \caption{Settings of \name, shared by both VLMs.}
   \label{tab:supp-hparams}
-\end{table}
-
-\begin{table}[t]
-  \centering
-  \footnotesize
-  \renewcommand{\arraystretch}{1.15}
-  \begin{tabular}{l l}
-    \toprule
-    Setting & Value \\
-    \midrule
-    Frame relevance encoder & SigLIP 2 (so400m-patch14-384)~\cite{siglip2} \\
-    Subtitle relevance encoder & BGE (base-en-v1.5)~\cite{bge} \\
-    Token value parameter $\tau_{\text{frame}}$ & 38 \\
-    Token value parameter $\tau_{\text{text}}$ & 13.6 \\
-    Subtitle weight $\beta$ & 0.5 \\
-    Redundancy penalty $\eta$ & $2.67\times10^{-5}$ \\
-    Iterations $L$ & 20 \\
-    Bisection steps per iteration & 60 \\
-    \bottomrule
-  \end{tabular}
-  \caption{Settings of \name with InternVL3.5-4B.}
-  \label{tab:supp-hparams-ivl}
 \end{table}
 
 \subsection{Answer Prompt}
@@ -251,7 +232,7 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
 
 All methods answer with the prompt in \cref{fig:supp-prompt}. Each frame given to the VLM is preceded by its timestamp, and on Video-MME the subtitles of the selected items precede the question. The prediction is the option letter with the highest probability.
 
-\begin{figure}[t]
+\begin{figure}[!htb]
 \begin{tcolorbox}[colframe=gray, colback=white, colbacktitle=gray!10, coltitle=black,
     boxrule=0.4mm, arc=1mm, left=4pt, right=4pt, top=3pt, bottom=3pt,
     fonttitle=\bfseries\small, title={Prompt: Multiple-choice answering}]
@@ -279,6 +260,14 @@ The best answer is:
 \label{fig:supp-prompt}
 \end{figure}
 
+% Declared here so that it is placed at the top of the page that holds Sec. C.
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig/category_radar.pdf}
+  \caption{\textbf{\name achieves the highest accuracy in most question categories of Video-MME and MLVU.} Accuracy (\%) per question category; columns are benchmarks and rows are VLMs, and each benchmark shares one radial scale across both VLMs. Numbers in parentheses are question counts. Video-MME groups its 12 task types into six as in Q-Frame~\cite{zhang2025qframe}; LongVideoBench uses its 17 question categories.}
+  \label{fig:supp-radar}
+\end{figure*}
+
 \subsection{Baseline Implementations}
 \label{sec:supp-baselines}
 
@@ -296,14 +285,15 @@ We compare all methods under the same conditions, so that differences in accurac
 \section{Additional Results}
 \label{sec:supp-results}
 
-\Cref{fig:supp-radar} breaks down the accuracy of the main results by question category. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, with the largest gains on reasoning questions (4.2 and 6.8 points over the best baseline with Qwen3-VL-8B and InternVL3.5-4B, respectively). On MLVU, \name achieves the highest accuracy on six of the seven tasks with Qwen3-VL-8B and on four with InternVL3.5-4B. These results show that the gains of \name extend across most question types rather than coming from a single one.
-
+% Declared here so that it is placed at the top of the page that holds Sec. D.
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=\linewidth]{fig/category_radar.pdf}
-  \caption{\textbf{\name achieves the highest accuracy in most question categories of Video-MME and MLVU.} Accuracy (\%) per question category; columns are benchmarks and rows are VLMs, and each benchmark shares one radial scale across both VLMs. Numbers in parentheses are question counts. Video-MME groups its 12 task types into six as in Q-Frame~\cite{zhang2025qframe}; LongVideoBench uses its 17 question categories.}
-  \label{fig:supp-radar}
+  \includegraphics[width=\linewidth]{fig/sens_panels.pdf}
+  \caption{\textbf{\name is robust to its manually chosen settings.} Accuracy against compute when varying (a) the attention weight $\omega$ on MT-Video-Bench, (b) the subtitle weight $\beta$ on Video-MME, and (c) the relevance temperature $T$ on Video-MME, with all other settings fixed.}
+  \label{fig:supp-sens}
 \end{figure*}
+
+\Cref{fig:supp-radar} breaks down the accuracy of the main results by question category. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, with the largest gains on reasoning questions (4.2 and 6.8 points over the best baseline with Qwen3-VL-8B and InternVL3.5-4B, respectively). On MLVU, \name achieves the highest accuracy on six of the seven tasks with Qwen3-VL-8B and on four with InternVL3.5-4B. These results show that the gains of \name extend across most question types rather than coming from a single one.
 
 \section{Additional Experiments}
 \label{sec:supp-exp}
@@ -311,35 +301,14 @@ We compare all methods under the same conditions, so that differences in accurac
 \subsection{Sensitivity Analysis}
 \label{sec:supp-sens}
 
-\name has three hand-set settings: the attention weight $\omega$ of attention refinement, the subtitle weight $\beta$, and the temperature $T$ of the softmax that turns the query similarities of the candidate items into the relevance $r_i(q)$. \Cref{fig:supp-omega,fig:supp-beta,fig:supp-T} vary each of them while keeping all other settings fixed. Every $\omega>0$ improves over retrieval relevance alone ($\omega=0$) in both accuracy and compute, and the values $\omega>0$ differ by less than one point. With $\beta=0$, no subtitle receives tokens and the prompt contains none, which reduces accuracy by 12 points, while all values $\beta>0$ stay within 2 points of each other. Accuracy is highest at the default temperature and drops by about 3 points when $T$ is much smaller or larger. \name is, therefore, robust to $\omega$ and $\beta$ within a wide range, and $T$ only needs to avoid the extremes.
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{fig/sens_omega.pdf}
-  \caption{Sensitivity of \name to the attention weight $\omega$ on MT-Video-Bench.}
-  \label{fig:supp-omega}
-\end{figure}
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{fig/sens_beta.pdf}
-  \caption{Sensitivity of \name to the subtitle weight $\beta$ on Video-MME.}
-  \label{fig:supp-beta}
-\end{figure}
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{fig/sens_T.pdf}
-  \caption{Sensitivity of \name to the relevance temperature $T$ on Video-MME.}
-  \label{fig:supp-T}
-\end{figure}
+\name has three manually chosen settings: the attention weight $\omega$, the subtitle weight $\beta$, and the temperature $T$ of the softmax that turns the query similarities of the candidate items into the relevance $r_i(q)$. \Cref{fig:supp-sens} varies each setting while keeping all other settings fixed. For the attention weight (\cref{fig:supp-sens}a), every $\omega>0$ improves over retrieval relevance alone ($\omega=0$) in both accuracy and compute, and the accuracy of all $\omega>0$ differs by less than one point. For the subtitle weight (\cref{fig:supp-sens}b), $\beta=0$ gives no tokens to subtitles and reduces accuracy by 12 points, whereas all $\beta>0$ stay within 2 points of each other. For the relevance temperature (\cref{fig:supp-sens}c), accuracy is highest at the default $T=0.63$, remains within one point at $T=1$, and drops by about 3 points when $T$ is much smaller or larger. \name is, therefore, robust to $\omega$ and $\beta$ over a wide range, and to $T$ near its default value.
 
 \subsection{Solver Efficiency}
 \label{sec:supp-solver}
 
 We compare iterative water-filling against two integer solvers, Gurobi~\cite{gurobi} and SCIP~\cite{scip}, which solve the discrete allocation problem to optimality, and against CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel}, which solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames and a time limit of 10 minutes. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi, while SCIP does not finish beyond 420 frames. The objective of iterative water-filling stays within 0.04\% of the integer optimum.
 
-\begin{table}[t]
+\begin{table}[!htb]
   \centering
   \footnotesize
   \setlength{\tabcolsep}{3.4pt}
