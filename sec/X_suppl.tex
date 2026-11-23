@@ -12,7 +12,7 @@ In this supplementary material, we provide the derivations and proofs omitted fr
 \section{Derivations and Proofs}
 \label{sec:supp-proofs}
 
-For completeness, we first restate the allocation problem of the main paper. Let $b_i\in[0,b_i^{\max}]$ be the token count of item $i\in\mathcal F\cup\mathcal S$, and let $v_i(b_i)=b_i/(b_i+\tau_i)$ be its token value, where $\tau_i$ is $\tau_{\text{frame}}$ for a frame and $\tau_{\text{text}}$ for a subtitle. \name solves
+For completeness, we first restate the allocation problem of the main paper. Let $\mathcal F$ and $\mathcal S$ be the candidate frames and subtitles, let $b_i\in[0,b_i^{\max}]$ be the token count of item $i\in\mathcal F\cup\mathcal S$, and let $v_i(b_i)=b_i/(b_i+\tau_i)$ be its token value, where $\tau_i$ is $\tau_{\text{frame}}$ for a frame and $\tau_{\text{text}}$ for a subtitle. \name solves
 \begin{equation}
 \begin{aligned}
   \max_{\mathbf b}\quad & \sum_{i\in\mathcal F} r_i(q,\mathbf b)\,v_i(b_i)+\beta\sum_{i\in\mathcal S} r_i(q,\mathbf b)\,v_i(b_i)\\
@@ -43,14 +43,14 @@ The budget $B$ therefore restricts the token values to the feasible set
   \mathcal Z=\Big\{\mathbf z:\ 0\le z_i\le z_i^{\max},\ \ \sum_{i}\frac{\tau_i z_i}{1-z_i}\le B\Big\} .
 \label{eq:supp-feasible}
 \end{equation}
-Each function $\tau_i z_i/(1-z_i)$ is convex on $[0,1)$, because its second derivative $2\tau_i/(1-z_i)^3$ is positive. The budget constraint thus bounds a sum of convex functions, and $\mathcal Z$ is convex and compact.
+Each function $\tau_i z_i/(1-z_i)$ is convex on $[0,1)$, because its second derivative $2\tau_i/(1-z_i)^3$ is positive. The budget constraint thus keeps a convex function below $B$, so $\mathcal Z$ is convex, and it is compact because it is closed and bounded.
 
 The objective, in turn, is concave in the token values. Substituting \cref{eq:supp-cond} into \cref{eq:supp-allocation} gives
 \begin{equation}
   J(\mathbf z)=\bar{\mathbf r}^{\top}\mathbf z-\eta\,\mathbf z^{\top}\mathbf S\mathbf z ,
 \label{eq:supp-quadratic}
 \end{equation}
-where $\bar r_i=r_i(q)$ for a frame and $\bar r_i=\beta\,r_i(q)$ for a subtitle, and the similarity matrix $\mathbf S$ is block-diagonal, with the frame similarity matrix and the $\beta$-scaled subtitle similarity matrix as its blocks. Each block contains the cosine similarities between the embeddings of one modality, including the diagonal entries $s_{ii}=1$. Each block is, therefore, the Gram matrix of the normalized embeddings, which is positive semidefinite. Since $\beta>0$ and $\eta\ge0$, the matrix $\eta\,\mathbf S$ is also positive semidefinite, and $J$ is concave. Maximizing $J$ over $\mathcal Z$ is thus a convex program, in which every local maximum is a global maximum~\cite{boyd2004}.
+where $\bar r_i=r_i(q)$ for a frame and $\bar r_i=\beta\,r_i(q)$ for a subtitle, and the similarity matrix $\mathbf S$ is block-diagonal, with the frame similarity matrix and the $\beta$-scaled subtitle similarity matrix as its blocks. Each block contains the cosine similarities between the embeddings of one modality, including the diagonal entries $s_{ii}=1$. The frame block is, therefore, a Gram matrix of normalized embeddings and the subtitle block is a positive multiple of one, so $\mathbf S$ is positive semidefinite. Since $\eta\ge0$, $J$ is concave. Maximizing $J$ over $\mathcal Z$ is thus a convex program, in which every local maximum is a global maximum~\cite{boyd2004}.
 
 \subsection{Derivation of Water-Filling}
 \label{sec:supp-waterfill}
@@ -63,12 +63,12 @@ We now derive the water-filling allocation of the main paper as the unique solut
 \end{aligned}
 \label{eq:supp-fixed}
 \end{equation}
-We solve this subproblem through its Lagrangian dual. The idea is to replace the budget by a price per token, let each item acquire tokens at that price, and then adjust the price until the budget is spent. Introducing a multiplier $\lambda\ge0$ for the budget constraint, and keeping the bounds $0\le b_i\le b_i^{\max}$ as the domain of $\mathbf b$, gives the Lagrangian
+We solve this subproblem through its Lagrangian dual. The idea is to replace the budget by a price per token, let each item acquire tokens at that price, and then adjust the price until the budget is spent. We introduce a multiplier $\lambda\ge0$ for the budget constraint and keep the bounds $0\le b_i\le b_i^{\max}$ as the domain of $\mathbf b$, which gives the Lagrangian
 \begin{equation}
   \mathcal L(\mathbf b,\lambda)=\sum_i \bar r_i\,\frac{b_i}{b_i+\tau_i}-\lambda\Big(\sum_i b_i-B\Big) .
 \label{eq:supp-lagrangian}
 \end{equation}
-The subproblem equals $\max_{\mathbf b}\min_{\lambda\ge0}\mathcal L(\mathbf b,\lambda)$, and its dual is $\min_{\lambda\ge0}\max_{\mathbf b}\mathcal L(\mathbf b,\lambda)$. Strong duality holds because the objective is concave, the constraints are linear, and $\mathbf b=\mathbf 0$ is strictly feasible~\cite{boyd2004}. Hence, the two problems attain the same value, and the solution of the subproblem maximizes $\mathcal L(\cdot,\lambda^\star)$ at the dual optimum $\lambda^\star$.
+The subproblem is equivalent to $\max_{\mathbf b}\min_{\lambda\ge0}\mathcal L(\mathbf b,\lambda)$, and its dual is $\min_{\lambda\ge0}\max_{\mathbf b}\mathcal L(\mathbf b,\lambda)$. Strong duality holds because the objective is concave, the constraints are linear, and $\mathbf b=\mathbf 0$ is strictly feasible~\cite{boyd2004}. Hence, the two problems attain the same value, and the solution of the subproblem maximizes $\mathcal L(\cdot,\lambda^\star)$ at the dual optimum $\lambda^\star$.
 
 \paragraph{Inner maximization.}
 For a fixed $\lambda>0$, the Lagrangian separates over the items, and each item solves
@@ -76,12 +76,12 @@ For a fixed $\lambda>0$, the Lagrangian separates over the items, and each item 
   \max_{0\le b_i\le b_i^{\max}}\ \bar r_i\,\frac{b_i}{b_i+\tau_i}-\lambda\,b_i .
 \label{eq:supp-item}
 \end{equation}
-This objective is strictly concave, so setting its derivative to zero,
+This objective is strictly concave. Setting its derivative to zero gives
 \begin{equation}
   \frac{\bar r_i\,\tau_i}{(b_i+\tau_i)^2}=\lambda ,
 \label{eq:supp-stationarity}
 \end{equation}
-and clipping the solution to the domain yields its unique maximizer
+and clipping the solution to the domain gives the unique maximizer
 \begin{equation}
   b_i(\lambda)=\left[\sqrt{\bar r_i\tau_i/\lambda}-\tau_i\right]_0^{b_i^{\max}} ,
 \label{eq:supp-waterfill}
@@ -99,7 +99,7 @@ If $\sum_i b_i^{\max}\le B$, the budget is not binding and every item receives i
 \subsection{Proof of Proposition 1}
 \label{sec:supp-convergence}
 
-\noindent\textbf{Proposition 1} (restated)\textbf{.} \textit{Let $J^\star$ be the global maximum of \cref{eq:supp-allocation} over continuous token allocations, and let $J^{(\ell)}$ be the objective value after $\ell$ iterations of iterative water-filling. Then}
+\noindent\textbf{Proposition 1} (restated)\textbf{.} \textit{Let $J^\star$ be the global maximum of \cref{eq:supp-allocation} over continuous token allocations, and let $J^{(\ell)}$ be the objective value after $\ell$ iterations of Algorithm~1 of the main paper. Then}
 \begin{equation}
   J^\star-J^{(\ell)}\le\frac{4\,\eta\,\sigma_{\max}D^2}{\ell+2}=O\Big(\frac{1}{\ell}\Big) ,
 \label{eq:supp-rate}
@@ -107,7 +107,7 @@ If $\sum_i b_i^{\max}\le B$, the budget is not binding and every item receives i
 \textit{where $\sigma_{\max}$ is the largest eigenvalue of the frame and $\beta$-scaled subtitle similarity matrices and $D$ is the diameter of the feasible token-value set under budget $B$.}
 
 \smallskip
-The proof follows the standard analysis of the Frank--Wolfe method~\cite{jaggi2013}, applied to the token values of \cref{sec:supp-convex}. It uses the gradient $\nabla J(\mathbf z)=\bar{\mathbf r}-2\eta\,\mathbf S\mathbf z$, which is the discounted relevance of the main paper, and the constant $C=2\eta\,\sigma_{\max}$, which bounds the curvature of $J$. The diameter $D$ is the largest distance between two points of $\mathcal Z$. The proof rests on two lemmas. The first bounds how far the current token values are from the optimum, and the second bounds how much one iteration improves the objective.
+The proof follows the standard analysis of the Frank--Wolfe method~\cite{jaggi2013}, applied to the token values of \cref{sec:supp-convex}. It uses the gradient $\nabla J(\mathbf z)=\bar{\mathbf r}-2\eta\,\mathbf S\mathbf z$, which is the discounted relevance $\tilde{\mathbf r}$ of Eq.~(6) of the main paper, and the constant $C=2\eta\,\sigma_{\max}$, which bounds the curvature of $J$. The diameter $D$ is the largest distance between two points of $\mathcal Z$. The proof rests on two lemmas. The first bounds how far the current token values are from the optimum, and the second bounds how much one iteration improves the objective.
 
 \begin{lemma}[Distance to the optimum]
 \label{lem:gap}
@@ -138,10 +138,10 @@ For every $\mathbf z,\mathbf s\in\mathcal Z$ and $\gamma\in[0,1]$,
 Write $\mathbf d=\gamma(\mathbf s-\mathbf z)$. Since $J$ is quadratic, its second-order expansion is exact: $J(\mathbf z+\mathbf d)=J(\mathbf z)+\nabla J(\mathbf z)^{\top}\mathbf d-\eta\,\mathbf d^{\top}\mathbf S\mathbf d$. The last term is at least $-\eta\,\sigma_{\max}\|\mathbf d\|^2=-\frac{C}{2}\|\mathbf d\|^2$, and $\|\mathbf d\|\le\gamma D$.
 \end{proof}
 
-\noindent That is, a step of size $\gamma$ toward $\mathbf s$ gains a fraction $\gamma$ of the improvement predicted by the linear approximation and loses a curvature term that shrinks with $\gamma^2$.
+\noindent That is, a step of size $\gamma$ toward $\mathbf s$ gains at least a fraction $\gamma$ of the improvement predicted for a full step, minus a curvature term that shrinks with $\gamma^2$.
 
 \begin{proof}[Proof of Proposition 1]
-We first derive a recursion for the remaining gap and then solve it by induction. Let $\mathbf z^{(\ell-1)}$ be the token values before iteration $\ell$, with $\mathbf z^{(0)}=\mathbf 0$, and let $h_\ell=J^\star-J(\mathbf z^{(\ell)})$ be the remaining gap. Iteration $\ell$ runs water-filling with the discounted relevance $\nabla J(\mathbf z^{(\ell-1)})$, which returns the maximizer $\mathbf s$ of the right-hand side of \cref{eq:supp-lem-gap}, and moves to $\mathbf z^{(\ell)}=\mathbf z^{(\ell-1)}+\gamma_\ell(\mathbf s-\mathbf z^{(\ell-1)})$ with $\gamma_\ell=2/(\ell+1)$. This point lies in $\mathcal Z$ because $\mathcal Z$ is convex.
+We first derive a recursion for the remaining gap and then solve it by induction. Let $\mathbf z^{(\ell-1)}$ be the token values before iteration $\ell$, with $\mathbf z^{(0)}=\mathbf 0$, and let $h_\ell=J^\star-J(\mathbf z^{(\ell)})$ be the remaining gap. Iteration $\ell$ runs water-filling with the discounted relevance $\nabla J(\mathbf z^{(\ell-1)})$, which returns the maximizer $\mathbf s$ of the right-hand side of \cref{eq:supp-lem-gap} ($\mathbf z^\star$ in the main paper), and moves to $\mathbf z^{(\ell)}=\mathbf z^{(\ell-1)}+\gamma_\ell(\mathbf s-\mathbf z^{(\ell-1)})$ with $\gamma_\ell=2/(\ell+1)$. This point lies in $\mathcal Z$ because $\mathcal Z$ is convex.
 
 Applying \cref{lem:step} with $\mathbf z=\mathbf z^{(\ell-1)}$ and $\gamma=\gamma_\ell$ gives
 \begin{align*}
@@ -178,7 +178,7 @@ The main paper states that neither proportional allocation~\cite{luo2025quota} n
 Suppose at least three items have pairwise distinct relevances $\bar r_i>0$ and share the same parameter $\tau$, and let $b_i=c\,\bar r_i$ with $c>0$ satisfy $0<b_i<b_i^{\max}$ for these items. Then this allocation does not maximize \cref{eq:supp-fixed}.
 \end{lemma}
 \begin{proof}
-By \cref{sec:supp-waterfill}, an optimal allocation requires all items with $0<b_i<b_i^{\max}$ to share the same marginal gain, i.e., $\bar r_i\tau/(c\,\bar r_i+\tau)^2=\lambda$ for some $\lambda>0$. Rearranged, every such relevance is a root of the quadratic $\lambda c^2x^2+(2\lambda c\tau-\tau)x+\lambda\tau^2=0$ in $x$. A quadratic has at most two distinct roots, which contradicts the three pairwise distinct relevances.
+By \cref{sec:supp-waterfill}, an optimal allocation requires all items with $0<b_i<b_i^{\max}$ to share the same marginal gain, i.e., $\bar r_i\tau/(c\,\bar r_i+\tau)^2=\lambda$ for some $\lambda>0$. Rearranging this equation shows that every such relevance is a root of the quadratic $\lambda c^2x^2+(2\lambda c\tau-\tau)x+\lambda\tau^2=0$ in $x$. A quadratic has at most two distinct roots, which contradicts the three pairwise distinct relevances.
 \end{proof}
 
 \noindent Intuitively, proportional allocation would equalize the marginal gains only if the token value grew like $\log b_i$, which never saturates. With a saturating token value, proportional allocation keeps adding tokens to the most relevant items after their token value has saturated, and takes these tokens from less relevant items that would still benefit.
@@ -201,7 +201,7 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
 \subsection{Settings of \name}
 \label{sec:supp-settings}
 
-\Cref{tab:supp-hparams} lists the settings of \name, which are the same for Qwen3-VL-8B~\cite{bai2025qwen3vl} and InternVL3.5-4B~\cite{wang2025internvl35}. SigLIP~2 embeds the query and the candidate frames, and BGE embeds the query and the candidate subtitles. Within each modality, we standardize the cosine similarities between the query and the candidate items to zero mean and unit variance, and a softmax with temperature $T$ turns them into the retrieval relevance $r_i(q)$. The token value parameters $\tau_{\text{frame}}$ and $\tau_{\text{text}}$ set how quickly the token value of an item saturates, and are fitted by least squares to the validation measurements of the main paper. The subtitle weight $\beta$ scales the relevance of subtitles relative to that of frames, and the redundancy penalty $\eta$ scales the discount that an item receives from similar items. Iterative water-filling runs for $L$ iterations and finds $\lambda$ in each iteration by bisection. In multi-turn conversations, the attention weight $\omega$ controls the contribution of attention to the relevance of cached items. The token budget $B$ sets the compute of each experiment, which we report in TFLOPs with each result.
+\Cref{tab:supp-hparams} lists the settings of \name, which are the same for Qwen3-VL-8B~\cite{bai2025qwen3vl} and InternVL3.5-4B~\cite{wang2025internvl35}. SigLIP~2 embeds the query and the candidate frames, and BGE embeds the query and the candidate subtitles. Within each modality, we standardize the cosine similarities between the query and the candidate items to zero mean and unit variance and turn them into the retrieval relevance $r_i(q)$ with a softmax of temperature $T$. The token value parameters $\tau_{\text{frame}}$ and $\tau_{\text{text}}$ set how quickly the token value of an item saturates and are fitted offline by least squares to the validation measurements of Sec.~3.2 of the main paper. The subtitle weight $\beta$ scales the relevance of subtitles relative to that of frames, and the redundancy penalty $\eta$ scales the discount that an item receives from similar items. Iterative water-filling runs for $L$ iterations and finds $\lambda$ in each iteration by bisection. In multi-turn conversations, the attention weight $\omega$ controls the contribution of attention to the relevance of cached items. The token budget $B$ sets the compute of each experiment, which we report in TFLOPs with each result.
 
 \begin{table}[!htb]
   \centering
@@ -267,14 +267,14 @@ The best answer is:
 \subsection{Baseline Implementations}
 \label{sec:supp-baselines}
 
-We compare all methods under the same conditions, so that differences in accuracy come from which evidence each method selects and how it divides the token budget. All methods select from the same candidate frames and answer with the same VLM and prompt (\cref{sec:supp-prompt}) within the same token budget. On Video-MME, every baseline also receives the subtitles aligned with the frames it selects, counted within that budget. Every method that scores query--frame relevance with an image--text encoder uses the same SigLIP~2 similarities as \name, so that no method gains from a stronger encoder. The only exception is QuoTA, whose scorer is a VLM judge that is part of the method itself. For methods that call a VLM more than once, every call counts toward their compute. Each baseline otherwise keeps the settings recommended by its authors, and is implemented as follows.
+We compare all methods under the same conditions, so that differences in accuracy come from which evidence each method selects and how it divides the token budget. All methods select from the same candidate frames and answer with the same VLM and prompt (\cref{sec:supp-prompt}) within the same token budget. On Video-MME, every baseline also receives the subtitles aligned with the frames it selects, counted within that budget. Every method that scores query--frame relevance with an image--text encoder uses the same SigLIP~2 similarities as \name, so that no method gains from a stronger encoder. QuoTA keeps its own scorer, a VLM judge that is part of the method itself. For methods that call a VLM more than once, every call counts toward their compute. Each baseline otherwise keeps the settings recommended by its authors and is implemented as follows.
 
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\setlength{\topsep}{2pt}
   \item \textbf{Uniform sampling}: evenly spaced frames, each with the same token count.
   \item \textbf{Top-K}: as described in the main paper.
   \item \textbf{FOCUS}~\cite{zhu2026focus}: released code, with SigLIP~2 similarities in place of its BLIP scores.
   \item \textbf{Q-Frame}~\cite{zhang2025qframe}: released code, with SigLIP~2 similarities in place of its Long-CLIP scores and its three resolution tiers scaled to fill the token budget.
-  \item \textbf{QuoTA}~\cite{luo2025quota}: released code with its default prompts and its Qwen2-VL-2B judge.
+  \item \textbf{QuoTA}~\cite{luo2025quota}: released code, with its default prompts and its Qwen2-VL-2B judge.
   \item \textbf{AdaAlloc}~\cite{an2026adaalloc}: re-implemented from its paper, with SigLIP~2 similarities in place of its PE-Core scores. Since it makes three VLM calls per question, we scale the token budget of each call so that its total compute matches that of the other methods.
 \end{itemize}
 
@@ -322,7 +322,7 @@ We compare all methods under the same conditions, so that differences in accurac
   \label{fig:supp-sens}
 \end{figure*}
 
-\Cref{fig:supp-radar} breaks down the accuracy in Table~1 of the main paper by question category. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, and its largest gains are on reasoning questions (4.2 and 6.8 points over the best baseline with Qwen3-VL-8B and InternVL3.5-4B, respectively). On MLVU, \name achieves the highest accuracy on six of the seven tasks with Qwen3-VL-8B and on four with InternVL3.5-4B. The gains of \name thus hold across question categories and do not come from a single one.
+\Cref{fig:supp-radar} breaks down the accuracy in Tab.~1 of the main paper by question category. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, and its largest gains are on reasoning questions (4.2 and 6.8 points over the best baseline with Qwen3-VL-8B and InternVL3.5-4B, respectively). On MLVU, \name achieves the highest accuracy in six of the seven tasks with Qwen3-VL-8B (one tied with Q-Frame) and in four with InternVL3.5-4B. The gains of \name thus hold across question categories and do not come from a single one.
 
 \section{Additional Experiments}
 \label{sec:supp-exp}
@@ -330,7 +330,7 @@ We compare all methods under the same conditions, so that differences in accurac
 \subsection{Solver Efficiency}
 \label{sec:supp-solver}
 
-We compare iterative water-filling with three off-the-shelf solvers. Gurobi~\cite{gurobi} and SCIP~\cite{scip} are integer solvers that solve the discrete allocation problem to optimality, and CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel} solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames with 64-dimensional frame embeddings and a time limit of 10 minutes. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi, while SCIP does not finish beyond 420 frames. The objective of iterative water-filling stays within 0.04\% of the integer optimum. With the 1,152-dimensional embeddings of SigLIP~2, Gurobi takes 12.7 seconds for 3,600 frames, whereas iterative water-filling takes 0.24 seconds.
+We compare iterative water-filling with three off-the-shelf solvers. Gurobi~\cite{gurobi} and SCIP~\cite{scip} are integer solvers that solve the discrete allocation problem to optimality, and CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel} solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames with 64-dimensional frame embeddings and a time limit of 10 minutes. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi, while SCIP does not finish within the time limit beyond 420 frames. The objective of iterative water-filling stays within 0.04\% of the integer optimum. With the 1,152-dimensional embeddings of SigLIP~2, Gurobi takes 12.7 seconds for 3,600 frames, whereas iterative water-filling takes 0.24 seconds.
 
 \clearpage  % releases the float page of Fig. 10 and Fig. 11
 \subsection{Sensitivity Analysis}
