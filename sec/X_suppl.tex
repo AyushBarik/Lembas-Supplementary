@@ -283,6 +283,31 @@ We compare all methods under the same conditions, so that differences in accurac
   \item \textbf{AdaAlloc}~\cite{an2026adaalloc}: re-implemented from its paper, with SigLIP~2 similarities in place of its PE-Core scores. Since it makes three VLM calls per question, we scale the token budget of each call so that its total compute matches that of the other methods.
 \end{itemize}
 
+% Declared here so that it is placed at the top of the column that holds Sec. D.
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{3.4pt}
+  \renewcommand{\arraystretch}{1.15}
+  \begin{tabular}{r r r r r r}
+    \toprule
+    \multirow{2}{*}{Frames} & \multicolumn{4}{c}{Solving time (s)} & \multirow{2}{*}{Speedup} \\
+    \cmidrule(lr){2-5}
+    & Gurobi~\cite{gurobi} & SCIP~\cite{scip} & CVXPY~\cite{cvxpy} & Ours & \\
+    \midrule
+    30    & 0.04 & 1.9   & 0.010 & 0.006 & 1.8--349$\times$ \\
+    60    & 0.03 & 4.0   & 0.013 & 0.007 & 1.8--539$\times$ \\
+    120   & 0.09 & 9.7   & 0.039 & 0.009 & 4.3--1,061$\times$ \\
+    240   & 0.20 & 23.9  & 0.040 & 0.031 & 1.3--771$\times$ \\
+    420   & 0.56 & 51.7  & 0.080 & 0.025 & 3.2--2,060$\times$ \\
+    1,800 & 3.01 & $>$600 & 0.76 & 0.13  & 5.8--$>$4,500$\times$ \\
+    3,600 & 5.03 & $>$600 & 1.79 & 0.26  & 7.0--$>$2,300$\times$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Solving time of iterative water-filling and three off-the-shelf solvers. Speedup ranges from the fastest to the slowest solver.}
+  \label{tab:supp-solver}
+\end{table}
+
 \section{Additional Results}
 \label{sec:supp-results}
 
@@ -316,30 +341,6 @@ We compare all methods under the same conditions, so that differences in accurac
 \label{sec:supp-solver}
 
 We compare iterative water-filling against two integer solvers, Gurobi~\cite{gurobi} and SCIP~\cite{scip}, which solve the discrete allocation problem to optimality, and against CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel}, which solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames with 64-dimensional frame embeddings and a time limit of 10 minutes. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi, while SCIP does not finish beyond 420 frames. The objective of iterative water-filling stays within 0.04\% of the integer optimum. With the 1,152-dimensional embeddings of SigLIP~2, Gurobi takes 12.7 seconds for 3,600 frames, whereas iterative water-filling takes 0.24 seconds.
-
-\begin{table}[!htb]
-  \centering
-  \footnotesize
-  \setlength{\tabcolsep}{3.4pt}
-  \renewcommand{\arraystretch}{1.15}
-  \begin{tabular}{r r r r r r}
-    \toprule
-    \multirow{2}{*}{Frames} & \multicolumn{4}{c}{Solving time (s)} & \multirow{2}{*}{Speedup} \\
-    \cmidrule(lr){2-5}
-    & Gurobi~\cite{gurobi} & SCIP~\cite{scip} & CVXPY~\cite{cvxpy} & Ours & \\
-    \midrule
-    30    & 0.04 & 1.9   & 0.010 & 0.006 & 1.8--349$\times$ \\
-    60    & 0.03 & 4.0   & 0.013 & 0.007 & 1.8--539$\times$ \\
-    120   & 0.09 & 9.7   & 0.039 & 0.009 & 4.3--1,061$\times$ \\
-    240   & 0.20 & 23.9  & 0.040 & 0.031 & 1.3--771$\times$ \\
-    420   & 0.56 & 51.7  & 0.080 & 0.025 & 3.2--2,060$\times$ \\
-    1,800 & 3.01 & $>$600 & 0.76 & 0.13  & 5.8--$>$4,500$\times$ \\
-    3,600 & 5.03 & $>$600 & 1.79 & 0.26  & 7.0--$>$2,300$\times$ \\
-    \bottomrule
-  \end{tabular}
-  \caption{Solving time of iterative water-filling and three off-the-shelf solvers. Speedup ranges from the fastest to the slowest solver.}
-  \label{tab:supp-solver}
-\end{table}
 
 \section{Qualitative Example}
 \label{sec:supp-qual}
