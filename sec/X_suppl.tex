@@ -7,7 +7,7 @@
 \raggedbottom  % columns end where the text ends; the kit's \flushbottom stretched short paragraphs apart
 \renewcommand{\qedsymbol}{}  % no end-of-proof square; proofs end with a sentence
 
-In this supplementary material, we provide the derivations and proofs omitted from the main paper (\cref{sec:supp-proofs}), implementation details (\cref{sec:supp-impl}), additional results (\cref{sec:supp-results}), and additional experiments (\cref{sec:supp-exp}).
+In this supplementary material, we provide the derivations and proofs omitted from the main paper (\cref{sec:supp-proofs}), implementation details (\cref{sec:supp-impl}), and additional results (\cref{sec:supp-results}).
 
 \section{Derivations and Proofs}
 \label{sec:supp-proofs}
@@ -278,7 +278,7 @@ We compare all methods under the same conditions, so that differences in accurac
   \item \textbf{AdaAlloc}~\cite{an2026adaalloc}: re-implemented from its paper, with SigLIP~2 similarities in place of its PE-Core scores. Since it makes three VLM calls per question, we scale the token budget of each call so that its total compute matches that of the other methods.
 \end{itemize}
 
-% Declared at the end of B.3 so that Table 5 is placed at the top of the column that holds D.1.
+% Declared at the end of B.3 so that Table 5 is placed at the top of the column that holds C.2.
 \begin{table}[t]
   \centering
   \footnotesize
@@ -295,19 +295,19 @@ We compare all methods under the same conditions, so that differences in accurac
     120   & 0.09 & 9.7   & 0.039 & 0.009 & 4.3--1,061$\times$ \\
     240   & 0.20 & 23.9  & 0.040 & 0.031 & 1.3--771$\times$ \\
     420   & 0.56 & 51.7  & 0.080 & 0.025 & 3.2--2,060$\times$ \\
-    1,800 & 3.01 & $>$600 & 0.76 & 0.13  & 5.8--$>$4,500$\times$ \\
-    3,600 & 5.03 & $>$600 & 1.79 & 0.26  & 7.0--$>$2,300$\times$ \\
+    1,800 & 3.01 & 600+ & 0.76 & 0.13  & 5.8--4,500+$\times$ \\
+    3,600 & 5.03 & 600+ & 1.79 & 0.26  & 7.0--2,300+$\times$ \\
     \bottomrule
   \end{tabular}
-  \caption{Solving time of iterative water-filling and three off-the-shelf solvers. The speedup of iterative water-filling is given as a range over the three solvers.}
+  \caption{Solving time of iterative water-filling and three off-the-shelf solvers. The speedup of iterative water-filling is given as a range over the three solvers. 600+ marks a solver that did not finish within the 10-minute time limit.}
   \label{tab:supp-solver}
 \end{table}
 
 \section{Additional Results}
 \label{sec:supp-results}
 
-% Fig. 10 and Fig. 11 form a float page between Sec. C/D.1 and D.2 (the \clearpage before D.2 releases it).
-% As top floats they left room for only a few lines of D.2 below them, which split that paragraph over two pages.
+% Fig. 10 and Fig. 11 form a float page between C.1/C.2 and C.3 (the \clearpage before C.3 releases it).
+% As top floats they left room for only a few lines of C.3 below them, which split that paragraph over two pages.
 \begin{figure*}[p]
   \centering
   \includegraphics[width=\linewidth]{fig/category_radar.pdf}
@@ -322,10 +322,10 @@ We compare all methods under the same conditions, so that differences in accurac
   \label{fig:supp-sens}
 \end{figure*}
 
-\Cref{fig:supp-radar} breaks down the accuracy in Tab.~1 of the main paper by question category. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, and its largest gains are on reasoning questions (4.2 and 6.8 points over the best baseline with Qwen3-VL-8B and InternVL3.5-4B, respectively). On MLVU, \name achieves the highest accuracy in six of the seven tasks with Qwen3-VL-8B (one tied with Q-Frame) and in four with InternVL3.5-4B. The gains of \name thus hold across question categories and do not come from a single one.
+\subsection{Per-Category Accuracy}
+\label{sec:supp-category}
 
-\section{Additional Experiments}
-\label{sec:supp-exp}
+\Cref{fig:supp-radar} breaks down the accuracy in Tab.~1 of the main paper by question category. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, and its largest gains are on reasoning questions (4.2 and 6.8 points over the best baseline with Qwen3-VL-8B and InternVL3.5-4B, respectively). On MLVU, \name achieves the highest accuracy in six of the seven tasks with Qwen3-VL-8B (one tied with Q-Frame) and in four with InternVL3.5-4B. The gains of \name thus hold across question categories and do not come from a single one.
 
 \subsection{Solver Efficiency}
 \label{sec:supp-solver}
