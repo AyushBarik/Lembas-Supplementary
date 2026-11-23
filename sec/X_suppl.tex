@@ -7,7 +7,7 @@
 \raggedbottom  % columns end where the text ends; the kit's \flushbottom stretched short paragraphs apart
 \renewcommand{\qedsymbol}{}  % no end-of-proof square; proofs end with a sentence
 
-In this supplementary material, we provide the derivations and proofs omitted from the main paper (\cref{sec:supp-proofs}), implementation details (\cref{sec:supp-impl}), additional results (\cref{sec:supp-results}), additional experiments (\cref{sec:supp-exp}), and a qualitative example (\cref{sec:supp-qual}).
+In this supplementary material, we provide the derivations and proofs omitted from the main paper (\cref{sec:supp-proofs}), implementation details (\cref{sec:supp-impl}), additional results (\cref{sec:supp-results}), and additional experiments (\cref{sec:supp-exp}).
 
 \section{Derivations and Proofs}
 \label{sec:supp-proofs}
@@ -320,14 +320,6 @@ We compare all methods under the same conditions, so that differences in accurac
   \label{fig:supp-sens}
 \end{figure*}
 
-% Declared here so that it is placed at the top of the page after Secs. C-E, before the references.
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\linewidth]{fig/qual_example.pdf}
-  \caption{\textbf{\name concentrates tokens on the evidence that the question asks for.} Token allocation over video time for a Video-MME question, with eight of the frames that \name retains and their token counts. The shaded band marks the subtitle that names the air gun and the frame that shows it (blue border). Both methods use the same token budget.}
-  \label{fig:supp-qual}
-\end{figure*}
-
 \Cref{fig:supp-radar} breaks down the accuracy of the main results by question category. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, with the largest gains on reasoning questions (4.2 and 6.8 points over the best baseline with Qwen3-VL-8B and InternVL3.5-4B, respectively). On MLVU, \name achieves the highest accuracy on six of the seven tasks with Qwen3-VL-8B and on four with InternVL3.5-4B. These results show that the gains of \name extend across most question types rather than coming from a single one.
 
 \section{Additional Experiments}
@@ -342,8 +334,3 @@ We compare all methods under the same conditions, so that differences in accurac
 \label{sec:supp-solver}
 
 We compare iterative water-filling against two integer solvers, Gurobi~\cite{gurobi} and SCIP~\cite{scip}, which solve the discrete allocation problem to optimality, and against CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel}, which solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames with 64-dimensional frame embeddings and a time limit of 10 minutes. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi, while SCIP does not finish beyond 420 frames. The objective of iterative water-filling stays within 0.04\% of the integer optimum. With the 1,152-dimensional embeddings of SigLIP~2, Gurobi takes 12.7 seconds for 3,600 frames, whereas iterative water-filling takes 0.24 seconds.
-
-\section{Qualitative Example}
-\label{sec:supp-qual}
-
-\Cref{fig:supp-qual} shows how \name allocates the token budget for the example of Figure~2 of the main paper, a Video-MME question about the color of a pneumatic air gun. Top-K gives each of its 64 frames 170 tokens, so the frame that shows the air gun receives no more tokens than any other frame, and the VLM answers incorrectly. In contrast, \name gives this frame 512 tokens and keeps the subtitle that names the air gun, while it still retains 101 frames by giving less relevant frames as few as 8 tokens. Within the same token budget, \name thus preserves the detail that the question asks for and answers correctly.
