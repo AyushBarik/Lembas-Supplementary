@@ -21,7 +21,7 @@ PANELS = [  # symbol, color, points (value, tflops, acc), label offsets, x label
       1.0: (0, 6, "center")},
      "TFLOPs per conversation", range(260, 321, 20), range(56, 61)),
     (r"\beta", "orange", [(r["value"], r["tflops"], r["acc"]) for r in w["beta"]],
-     {0.0: (0, 6, "center"), 0.25: (6, 0, "left"), 0.5: (6, 0, "left"), 1.0: (0, 6, "center"), 2.0: (-6, 0, "right")},
+     {0.0: (0, 6, "center"), 0.25: (0, -6, "center"), 0.5: (6, 0, "left"), 1.0: (0, 6, "center"), 2.0: (-6, 0, "right")},
      "TFLOPs per question", range(231, 235), range(65, 86, 5)),
     ("T", "green", [(0.3, s["T0.3"]["tflops"], s["T0.3"]["acc"]), (0.63, dT["tflops"], dT["acc"]),
                     (1.0, s["T1"]["tflops"], s["T1"]["acc"]), (2.0, s["T2"]["tflops"], s["T2"]["acc"])],
@@ -29,7 +29,7 @@ PANELS = [  # symbol, color, points (value, tflops, acc), label offsets, x label
      "TFLOPs per question", range(226, 237, 2), range(74, 81, 2)),
 ]
 
-fig, axes = fs.figure_grid(1, 3, width=fs.WIDE, ratio=0.27)
+fig, axes = fs.figure_grid(1, 3, width=fs.WIDE, ratio=0.25)
 for ax, (sym, col, pts, off, xl, xt, yt) in zip(axes, PANELS):
     c = fs.PALETTE[col]
     for v, tf, a in pts:
