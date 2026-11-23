@@ -27,7 +27,7 @@ where the allocation-dependent relevance discounts the retrieval relevance $r_i(
 \end{equation}
 
 \paragraph{Setup.}
-All proofs in this section use the same few quantities. Each item $i$ has a token count $b_i$ and a token value $z_i=v_i(b_i)\in[0,1)$; we write $\mathbf b$ and $\mathbf z$ for the vectors of all items. $\mathcal Z$ is the set of token values that respect the budget, and $J(\mathbf z)$ is the objective of \cref{eq:supp-allocation} written in token values (both defined in \cref{sec:supp-convex}). The gradient $\nabla J(\mathbf z)$ is the discounted relevance of the main paper. Finally, $L=2\eta\,\sigma_{\max}$ measures the curvature of $J$, where $\sigma_{\max}$ is the largest eigenvalue of the similarity matrix $\mathbf S$, and $D$ is the largest distance between two points of $\mathcal Z$.
+All proofs in this section use the same few quantities. Each item $i$ has a token count $b_i$ and a token value $z_i=v_i(b_i)\in[0,1)$; we write $\mathbf b$ and $\mathbf z$ for the vectors of all items. $\mathcal Z$ is the set of token values that respect the budget, and $J(\mathbf z)$ is the objective of \cref{eq:supp-allocation} written in token values (both defined in \cref{sec:supp-convex}). The gradient $\nabla J(\mathbf z)$ is the discounted relevance of the main paper. Finally, $C=2\eta\,\sigma_{\max}$ measures the curvature of $J$, where $\sigma_{\max}$ is the largest eigenvalue of the similarity matrix $\mathbf S$, and $D$ is the largest distance between two points of $\mathcal Z$.
 
 \subsection{Convexity of the Continuous Relaxation}
 \label{sec:supp-convex}
@@ -127,13 +127,13 @@ For every $\mathbf z,\mathbf s\in\mathcal Z$ and $\gamma\in[0,1]$,
 \begin{equation}
 \begin{aligned}
   J\big(\mathbf z+\gamma(\mathbf s-\mathbf z)\big)\ge{}& J(\mathbf z)+\gamma\,\nabla J(\mathbf z)^{\top}(\mathbf s-\mathbf z)\\
-  &-\frac{L}{2}\gamma^2D^2 .
+  &-\frac{C}{2}\gamma^2D^2 .
 \end{aligned}
 \label{eq:supp-lem-step}
 \end{equation}
 \end{lemma}
 \begin{proof}
-Write $\mathbf d=\gamma(\mathbf s-\mathbf z)$. Since $J$ is quadratic, its second-order expansion is exact: $J(\mathbf z+\mathbf d)=J(\mathbf z)+\nabla J(\mathbf z)^{\top}\mathbf d-\eta\,\mathbf d^{\top}\mathbf S\mathbf d$. The last term is at least $-\eta\,\sigma_{\max}\|\mathbf d\|^2=-\frac{L}{2}\|\mathbf d\|^2$, and $\|\mathbf d\|\le\gamma D$.
+Write $\mathbf d=\gamma(\mathbf s-\mathbf z)$. Since $J$ is quadratic, its second-order expansion is exact: $J(\mathbf z+\mathbf d)=J(\mathbf z)+\nabla J(\mathbf z)^{\top}\mathbf d-\eta\,\mathbf d^{\top}\mathbf S\mathbf d$. The last term is at least $-\eta\,\sigma_{\max}\|\mathbf d\|^2=-\frac{C}{2}\|\mathbf d\|^2$, and $\|\mathbf d\|\le\gamma D$.
 \end{proof}
 
 \noindent In words, a step of size $\gamma$ toward $\mathbf s$ gains the improvement predicted by the linear approximation, minus a curvature penalty that shrinks with $\gamma^2$.
@@ -145,23 +145,23 @@ Our starting point is \cref{lem:step} with $\mathbf z=\mathbf z^{(\ell-1)}$ and 
 \begin{align*}
   J(\mathbf z^{(\ell)})
   &\ge J(\mathbf z^{(\ell-1)})+\gamma_\ell\,\nabla J(\mathbf z^{(\ell-1)})^{\top}(\mathbf s-\mathbf z^{(\ell-1)})\\
-  &\qquad-\frac{L}{2}\gamma_\ell^2D^2\\
-  &\ge J(\mathbf z^{(\ell-1)})+\gamma_\ell\,h_{\ell-1}-\frac{L}{2}\gamma_\ell^2D^2 ,
+  &\qquad-\frac{C}{2}\gamma_\ell^2D^2\\
+  &\ge J(\mathbf z^{(\ell-1)})+\gamma_\ell\,h_{\ell-1}-\frac{C}{2}\gamma_\ell^2D^2 ,
 \end{align*}
 where the second line uses \cref{lem:gap}. Subtracting both sides from $J^\star$ gives
 \begin{equation}
-  h_\ell\le(1-\gamma_\ell)\,h_{\ell-1}+\frac{L}{2}\gamma_\ell^2D^2 .
+  h_\ell\le(1-\gamma_\ell)\,h_{\ell-1}+\frac{C}{2}\gamma_\ell^2D^2 .
 \label{eq:supp-recursion}
 \end{equation}
 This contraction relates the gap after an iteration to the gap before it: each iteration removes a fraction $\gamma_\ell$ of the gap, at the price of a curvature term.
 
-We now show $h_\ell\le2LD^2/(\ell+2)$ by induction. For $\ell=1$, the step size is $\gamma_1=1$, and \cref{eq:supp-recursion} gives $h_1\le LD^2/2\le2LD^2/3$. For $\ell\ge2$, assume the claim for $\ell-1$, i.e., $h_{\ell-1}\le2LD^2/(\ell+1)$. Then
+We now show $h_\ell\le2CD^2/(\ell+2)$ by induction. For $\ell=1$, the step size is $\gamma_1=1$, and \cref{eq:supp-recursion} gives $h_1\le CD^2/2\le2CD^2/3$. For $\ell\ge2$, assume the claim for $\ell-1$, i.e., $h_{\ell-1}\le2CD^2/(\ell+1)$. Then
 \begin{align*}
-  h_\ell&\overset{\text{(a)}}{\le}\frac{\ell-1}{\ell+1}\,h_{\ell-1}+\frac{2LD^2}{(\ell+1)^2}\\
-  &\overset{\text{(b)}}{\le}\frac{\ell-1}{\ell+1}\cdot\frac{2LD^2}{\ell+1}+\frac{2LD^2}{(\ell+1)^2}\\
-  &=\frac{2LD^2\,\ell}{(\ell+1)^2}\overset{\text{(c)}}{\le}\frac{2LD^2}{\ell+2} ,
+  h_\ell&\overset{\text{(a)}}{\le}\frac{\ell-1}{\ell+1}\,h_{\ell-1}+\frac{2CD^2}{(\ell+1)^2}\\
+  &\overset{\text{(b)}}{\le}\frac{\ell-1}{\ell+1}\cdot\frac{2CD^2}{\ell+1}+\frac{2CD^2}{(\ell+1)^2}\\
+  &=\frac{2CD^2\,\ell}{(\ell+1)^2}\overset{\text{(c)}}{\le}\frac{2CD^2}{\ell+2} ,
 \end{align*}
-where (a) substitutes $\gamma_\ell=2/(\ell+1)$ into \cref{eq:supp-recursion}, (b) applies the induction hypothesis, and (c) uses $\ell(\ell+2)\le(\ell+1)^2$. Substituting $L=2\eta\,\sigma_{\max}$ gives \cref{eq:supp-rate}, which completes the proof.
+where (a) substitutes $\gamma_\ell=2/(\ell+1)$ into \cref{eq:supp-recursion}, (b) applies the induction hypothesis, and (c) uses $\ell(\ell+2)\le(\ell+1)^2$. Substituting $C=2\eta\,\sigma_{\max}$ gives \cref{eq:supp-rate}, which completes the proof.
 \end{proof}
 
 \noindent Two remarks help interpret the bound. First, the constant grows with $\eta$: a stronger redundancy penalty couples the items more and requires more iterations. Without the penalty ($\eta=0$), the bound is zero, and the first iteration, plain water-filling, is already optimal. Second, the bound applies to the continuous allocation, before it is rounded down to whole tokens. Since every token value lies in $[0,1)$, the diameter satisfies $D^2\le|\mathcal F|+|\mathcal S|$.
@@ -199,7 +199,7 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
 \subsection{Settings of \name}
 \label{sec:supp-settings}
 
-\Cref{tab:supp-hparams} lists the settings of \name, which are the same for Qwen3-VL-8B~\cite{bai2025qwen3vl} and InternVL3.5-4B~\cite{wang2025internvl35}. The two encoders score the relevance of frames and subtitles to the query. The token value parameter $\tau$ sets how quickly the value $v_i(b_i)=b_i/(b_i+\tau_i)$ of an item saturates with tokens, and is fitted by least squares to the validation measurements of the main paper. The subtitle weight $\beta$ scales the relevance of subtitles against that of frames, and the redundancy penalty $\eta$ weighs the similarity between items that both receive tokens. Iterative water-filling runs for $L$ iterations, each of which finds the token price $\lambda$ by bisection. In multi-turn conversations, the attention weight $\omega$ controls how much the VLM's attention refines the relevance of cached items. The token budget $B$ sets the compute of each experiment, which we report in TFLOPs with each result.
+\Cref{tab:supp-hparams} lists the settings of \name, which are the same for Qwen3-VL-8B~\cite{bai2025qwen3vl} and InternVL3.5-4B~\cite{wang2025internvl35}. The two encoders embed the query and the candidate items. The retrieval relevance $r_i(q)$ is a softmax, with temperature $T$, over the cosine similarities between the query and the candidate items of the same modality, which are standardized to zero mean and unit variance. The token value parameter $\tau$ sets how quickly the value $v_i(b_i)=b_i/(b_i+\tau_i)$ of an item saturates with tokens, and is fitted by least squares to the validation measurements of the main paper. The subtitle weight $\beta$ scales the relevance of subtitles against that of frames, and the redundancy penalty $\eta$ weighs the similarity between items that both receive tokens. Iterative water-filling runs for $L$ iterations, each of which finds the token price $\lambda$ by bisection. In multi-turn conversations, the attention weight $\omega$ controls how much the VLM's attention refines the relevance of cached items. The token budget $B$ sets the compute of each experiment, which we report in TFLOPs with each result.
 
 \begin{table}[!htb]
   \centering
@@ -212,6 +212,7 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
     \midrule
     Frame relevance encoder & SigLIP 2 (so400m-patch14-384)~\cite{siglip2} \\
     Subtitle relevance encoder & BGE (base-en-v1.5)~\cite{bge} \\
+    Relevance temperature $T$ & 0.63 \\
     \addlinespace[3pt]
     Token value parameter $\tau_{\text{frame}}$ & 38 \\
     Token value parameter $\tau_{\text{text}}$ & 13.6 \\
@@ -335,7 +336,7 @@ We compare all methods under the same conditions, so that differences in accurac
 \subsection{Sensitivity Analysis}
 \label{sec:supp-sens}
 
-\name has three manually chosen settings: the attention weight $\omega$, the subtitle weight $\beta$, and the temperature $T$ of the softmax that turns the query similarities of the candidate items into the relevance $r_i(q)$. \Cref{fig:supp-sens} varies each setting while keeping all other settings fixed. For the attention weight (\cref{fig:supp-sens}a), every $\omega>0$ improves over retrieval relevance alone ($\omega=0$) in both accuracy and compute, and the accuracy of all $\omega>0$ differs by less than one point. For the subtitle weight (\cref{fig:supp-sens}b), $\beta=0$ gives no tokens to subtitles and reduces accuracy by 12 points, whereas all $\beta>0$ stay within 2 points of each other. For the relevance temperature (\cref{fig:supp-sens}c), accuracy is highest at the default $T=0.63$, remains within one point at $T=1$, and drops by about 3 points when $T$ is much smaller or larger. \name is, therefore, robust to $\omega$ and $\beta$ over a wide range, and to $T$ near its default value.
+\name has three manually chosen settings: the attention weight $\omega$, the subtitle weight $\beta$, and the relevance temperature $T$. \Cref{fig:supp-sens} varies each setting while keeping all other settings fixed. For the attention weight (\cref{fig:supp-sens}a), every $\omega>0$ improves over retrieval relevance alone ($\omega=0$) in both accuracy and compute, and the accuracy of all $\omega>0$ differs by less than one point. For the subtitle weight (\cref{fig:supp-sens}b), $\beta=0$ gives no tokens to subtitles and reduces accuracy by 12 points, whereas all $\beta>0$ stay within 2 points of each other. For the relevance temperature (\cref{fig:supp-sens}c), accuracy is highest at the default $T=0.63$, remains within one point at $T=1$, and drops by about 3 points when $T$ is much smaller or larger. \name is, therefore, robust to $\omega$ and $\beta$ over a wide range, and to $T$ near its default value.
 
 \subsection{Solver Efficiency}
 \label{sec:supp-solver}
