@@ -7,7 +7,7 @@
 \raggedbottom  % columns end where the text ends; the kit's \flushbottom stretched short paragraphs apart
 \renewcommand{\qedsymbol}{}  % no end-of-proof square; proofs end with a sentence
 
-This supplementary material is organized as follows. \Cref{sec:supp-proofs} provides the derivations and proofs omitted from the main paper. \Cref{sec:supp-impl} lists the implementation details and hyperparameters. \Cref{sec:supp-exp} reports the sensitivity analysis and additional experiments.
+In this supplementary material, we provide the derivations and proofs omitted from the main paper (\cref{sec:supp-proofs}), implementation details (\cref{sec:supp-impl}), additional results (\cref{sec:supp-results}), and additional experiments (\cref{sec:supp-exp}).
 
 \section{Derivations and Proofs}
 \label{sec:supp-proofs}
@@ -249,7 +249,7 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
 \subsection{Answer Prompt}
 \label{sec:supp-prompt}
 
-All methods answer with the prompt in \cref{fig:supp-prompt}. Each shown frame is preceded by its timestamp, and on Video-MME the subtitles shown to the VLM precede the question. The prediction is the option letter with the highest probability.
+All methods answer with the prompt in \cref{fig:supp-prompt}. Each frame given to the VLM is preceded by its timestamp, and on Video-MME the subtitles of the selected items precede the question. The prediction is the option letter with the highest probability.
 
 \begin{figure}[t]
 \begin{tcolorbox}[colframe=gray, colback=white, colbacktitle=gray!10, coltitle=black,
@@ -282,7 +282,7 @@ The best answer is:
 \subsection{Baseline Implementations}
 \label{sec:supp-baselines}
 
-We compare all methods under the same conditions, so that differences in accuracy come from which evidence each method selects and how it divides the token budget. All methods select from the same candidate frames and answer with the same VLM and prompt (\cref{sec:supp-prompt}) within the same token budget. On Video-MME, every baseline also receives the subtitles aligned with the frames it selects, counted within that budget. Every method that scores query--frame relevance with an image--text encoder uses the same SigLIP~2 similarities as \name, so that no method gains from a stronger encoder. QuoTA is the only exception, since its scorer is a VLM judge that is part of the method itself. Methods that call a VLM more than once have every call counted toward their compute. Unless stated otherwise, each baseline keeps the settings recommended by its authors, and is implemented as follows.
+We compare all methods under the same conditions, so that differences in accuracy come from which evidence each method selects and how it divides the token budget. All methods select from the same candidate frames and answer with the same VLM and prompt (\cref{sec:supp-prompt}) within the same token budget. On Video-MME, every baseline also receives the subtitles aligned with the frames it selects, counted within that budget. Every method that scores query--frame relevance with an image--text encoder uses the same SigLIP~2 similarities as \name, so that no method gains from a stronger encoder. QuoTA is the only exception, since its scorer is a VLM judge that is part of the method itself. For methods that call a VLM more than once, every call counts toward their compute. Each baseline otherwise keeps the settings recommended by its authors, with the following changes.
 
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\setlength{\topsep}{2pt}
   \item \textbf{Uniform sampling}: evenly spaced frames, each with the same token count.
@@ -293,20 +293,20 @@ We compare all methods under the same conditions, so that differences in accurac
   \item \textbf{AdaAlloc}~\cite{an2026adaalloc}: re-implemented from its paper, with SigLIP~2 similarities in place of its PE-Core scores. Since it makes three VLM calls per question, we scale the token budget of each call so that its total compute matches that of the other methods.
 \end{itemize}
 
-\section{Additional Experiments}
-\label{sec:supp-exp}
+\section{Additional Results}
+\label{sec:supp-results}
 
-\subsection{Per-Category Performance}
-\label{sec:supp-category}
-
-\Cref{fig:supp-radar} breaks the main results down by question category. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, with the largest gains on reasoning and OCR questions. On MLVU, it is the most accurate method on six of the seven tasks with Qwen3-VL-8B and on four with InternVL3.5-4B. On LongVideoBench, the most accurate method varies across categories. However, each category contains only 65 to 97 questions, so differences of a few points between methods fall within sampling noise.
+\Cref{fig:supp-radar} breaks down the accuracy of the main results by question category. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, with the largest gains on reasoning questions (4.2 and 6.8 points over the best baseline with Qwen3-VL-8B and InternVL3.5-4B, respectively). On MLVU, \name achieves the highest accuracy on six of the seven tasks with Qwen3-VL-8B and on four with InternVL3.5-4B. These results show that the gains of \name extend across most question types rather than coming from a single one.
 
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\linewidth]{fig/category_radar.pdf}
-  \caption{\textbf{Accuracy (\%) per question category.} Columns are benchmarks and rows are VLMs; each benchmark shares one radial scale across both VLMs. Numbers in parentheses are question counts. Video-MME groups its 12 task types into six as in Q-Frame~\cite{zhang2025qframe}; LongVideoBench uses its 17 question categories.}
+  \caption{\textbf{\name achieves the highest accuracy in most question categories of Video-MME and MLVU.} Accuracy (\%) per question category; columns are benchmarks and rows are VLMs, and each benchmark shares one radial scale across both VLMs. Numbers in parentheses are question counts. Video-MME groups its 12 task types into six as in Q-Frame~\cite{zhang2025qframe}; LongVideoBench uses its 17 question categories.}
   \label{fig:supp-radar}
 \end{figure*}
+
+\section{Additional Experiments}
+\label{sec:supp-exp}
 
 \subsection{Sensitivity Analysis}
 \label{sec:supp-sens}
