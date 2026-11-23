@@ -199,7 +199,7 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
 \subsection{Settings of \name}
 \label{sec:supp-settings}
 
-\Cref{tab:supp-hparams} lists the settings of \name, which are the same for Qwen3-VL-8B~\cite{bai2025qwen3vl} and InternVL3.5-4B~\cite{wang2025internvl35}. The two encoders score the relevance of frames and subtitles to the query. The token value parameter $\tau$ sets how quickly the value $v_i(b_i)=b_i/(b_i+\tau_i)$ of an item saturates with tokens, and is fitted by least squares to the validation measurements of the main paper. The subtitle weight $\beta$ scales the relevance of subtitles against that of frames, and the redundancy penalty $\eta$ weighs the similarity between items that both receive tokens. Iterative water-filling runs for $L$ iterations, each of which finds the token price $\lambda$ by bisection. In multi-turn conversations, the attention weight $\omega$ controls how much the VLM's attention refines the relevance of cached items. The token budget $B$ varies across experiments and is stated with each result.
+\Cref{tab:supp-hparams} lists the settings of \name, which are the same for Qwen3-VL-8B~\cite{bai2025qwen3vl} and InternVL3.5-4B~\cite{wang2025internvl35}. The two encoders score the relevance of frames and subtitles to the query. The token value parameter $\tau$ sets how quickly the value $v_i(b_i)=b_i/(b_i+\tau_i)$ of an item saturates with tokens, and is fitted by least squares to the validation measurements of the main paper. The subtitle weight $\beta$ scales the relevance of subtitles against that of frames, and the redundancy penalty $\eta$ weighs the similarity between items that both receive tokens. Iterative water-filling runs for $L$ iterations, each of which finds the token price $\lambda$ by bisection. In multi-turn conversations, the attention weight $\omega$ controls how much the VLM's attention refines the relevance of cached items. The token budget $B$ sets the compute of each experiment, which we report in TFLOPs with each result.
 
 \begin{table}[!htb]
   \centering
@@ -290,7 +290,7 @@ We compare all methods under the same conditions, so that differences in accurac
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\linewidth]{fig/sens_panels.pdf}
-  \caption{\textbf{\name is robust to its manually chosen settings.} Accuracy against compute when varying (a) the attention weight $\omega$ on MT-Video-Bench, (b) the subtitle weight $\beta$ on Video-MME, and (c) the relevance temperature $T$ on Video-MME, with all other settings fixed.}
+  \caption{\textbf{\name is robust to its manually chosen settings.} Accuracy against compute when varying (a) the attention weight $\omega$ on MT-Video-Bench, (b) the subtitle weight $\beta$ on Video-MME, and (c) the relevance temperature $T$ on Video-MME, with all other settings fixed. The sweeps use subsets of 200 conversations (a), 150 questions (b), and 300 questions (c).}
   \label{fig:supp-sens}
 \end{figure*}
 
@@ -315,7 +315,7 @@ We compare all methods under the same conditions, so that differences in accurac
 \subsection{Solver Efficiency}
 \label{sec:supp-solver}
 
-We compare iterative water-filling against two integer solvers, Gurobi~\cite{gurobi} and SCIP~\cite{scip}, which solve the discrete allocation problem to optimality, and against CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel}, which solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames and a time limit of 10 minutes. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi, while SCIP does not finish beyond 420 frames. The objective of iterative water-filling stays within 0.04\% of the integer optimum.
+We compare iterative water-filling against two integer solvers, Gurobi~\cite{gurobi} and SCIP~\cite{scip}, which solve the discrete allocation problem to optimality, and against CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel}, which solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames with 64-dimensional frame embeddings and a time limit of 10 minutes. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi, while SCIP does not finish beyond 420 frames. The objective of iterative water-filling stays within 0.04\% of the integer optimum. With the 1,152-dimensional embeddings of SigLIP~2, Gurobi takes 12.7 seconds for 3,600 frames, whereas iterative water-filling takes 0.24 seconds.
 
 \begin{table}[!htb]
   \centering
