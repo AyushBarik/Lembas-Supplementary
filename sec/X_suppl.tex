@@ -296,6 +296,18 @@ We compare all methods under the same conditions, so that differences in accurac
 \section{Additional Experiments}
 \label{sec:supp-exp}
 
+\subsection{Per-Category Performance}
+\label{sec:supp-category}
+
+\Cref{fig:supp-radar} breaks the main results down by question category. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, with the largest gains on reasoning and OCR questions. On MLVU, it is the most accurate method on six of the seven tasks with Qwen3-VL-8B and on four with InternVL3.5-4B. On LongVideoBench, the most accurate method varies across categories. However, each category contains only 65 to 97 questions, so differences of a few points between methods fall within sampling noise.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig/category_radar.pdf}
+  \caption{\textbf{Accuracy (\%) per question category.} Columns are benchmarks and rows are VLMs; each benchmark shares one radial scale across both VLMs. Numbers in parentheses are question counts. Video-MME groups its 12 task types into six as in Q-Frame~\cite{zhang2025qframe}; LongVideoBench uses its 17 question categories.}
+  \label{fig:supp-radar}
+\end{figure*}
+
 \subsection{Sensitivity Analysis}
 \label{sec:supp-sens}
 
