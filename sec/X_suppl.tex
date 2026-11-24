@@ -54,9 +54,9 @@ where $\mathbf A$ is the adjacency matrix of $G$. Two adjacent frames thus have 
 \textit{Objective.} Each frame receives either no token, with token value $0$, or one token, with token value $v_i(1)=1/2$. Let $X$ be the set of frames that receive a token, and let $e(X)$ be the number of edges of $G$ with both endpoints in $X$. The budget requires $|X|\le k$, and the objective of \cref{eq:supp-allocation} becomes
 \begin{equation}
 \begin{aligned}
-  J(X)&=\frac{|X|}{2n}-\frac{1}{4n}\sum_{i,j\in X}s_{ij}
-       =\frac{|X|}{2n}-\frac{|X|}{4n}-\frac{e(X)}{2n^2}\\
-      &=\frac{|X|}{4n}-\frac{e(X)}{2n^2} .
+  J(X)&=\frac{|X|}{2n}-\frac{1}{4n}\sum_{i,j\in X}s_{ij}\\
+      &=\frac{|X|}{2n}-\frac{|X|}{4n}-\frac{e(X)}{2n^2}
+       =\frac{|X|}{4n}-\frac{e(X)}{2n^2} .
 \end{aligned}
 \label{eq:supp-nphard}
 \end{equation}
@@ -240,7 +240,7 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
 \subsection{Settings of \name}
 \label{sec:supp-settings}
 
-\Cref{tab:supp-hparams} lists the settings of \name, which are the same for Qwen3-VL-8B~\cite{bai2025qwen3vl} and InternVL3.5-4B~\cite{wang2025internvl35}. SigLIP~2 embeds the query and the candidate frames, and BGE embeds the query and the candidate subtitles. Within each modality, we standardize the cosine similarities between the query and the candidate items to zero mean and unit variance and turn them into the retrieval relevance $r_i(q)$ with a softmax of temperature $T$. The token value parameters $\tau_{\text{frame}}$ and $\tau_{\text{text}}$ set how quickly the token value of an item saturates and are fitted offline by least squares to the validation measurements of Sec.~3.2 of the main paper. The subtitle weight $\beta$ scales the relevance of subtitles relative to that of frames, and the redundancy penalty $\eta$ scales the discount that an item receives from similar items. Iterative water-filling runs for $L$ iterations and finds $\lambda$ in each iteration by bisection. In multi-turn conversations, the attention weight $\omega$ controls the contribution of attention to the relevance of cached items. The token budget $B$ sets the compute of each experiment, which we report in TFLOPs with each result.
+\Cref{tab:supp-hparams} lists the settings of \name. SigLIP~2 embeds the query and the candidate frames, and BGE embeds the query and the candidate subtitles. Within each modality, we standardize the cosine similarities between the query and the candidate items to zero mean and unit variance and turn them into the retrieval relevance $r_i(q)$ with a softmax of temperature $T$. The token value parameters $\tau_{\text{frame}}$ and $\tau_{\text{text}}$ set how quickly the token value of an item saturates and are fitted offline by least squares to the validation measurements of Sec.~3.2 of the main paper. The subtitle weight $\beta$ scales the relevance of subtitles relative to that of frames, and the redundancy penalty $\eta$ scales the discount that an item receives from similar items. Iterative water-filling runs for $L$ iterations and finds $\lambda$ in each iteration by bisection. In multi-turn conversations, the attention weight $\omega$ controls the contribution of attention to the relevance of cached items. The token budget $B$ sets the compute of each experiment, which we report in TFLOPs with each result.
 
 \begin{table}[!htb]
   \centering
@@ -266,7 +266,7 @@ In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the u
     Attention weight $\omega$ (multi-turn) & 0.5 \\
     \bottomrule
   \end{tabular}
-  \caption{Settings of \name, shared by both VLMs.}
+  \caption{Settings of \name.}
   \label{tab:supp-hparams}
 \end{table}
 
@@ -303,6 +303,15 @@ The best answer is:
 \label{fig:supp-prompt}
 \end{figure}
 
+% Declared before B.3 so that Fig. 10 takes the top of the next page, before Section C.
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig/category_radar.pdf}
+  \caption{\textbf{\name achieves the highest accuracy in more question categories than any baseline.} Accuracy (\%) per question category as defined by each benchmark, with question counts in parentheses. Video-MME's 12 task types are grouped into six as in Q-Frame~\cite{zhang2025qframe}.}
+  \label{fig:supp-radar}
+\end{figure*}
+
+
 \subsection{Baseline Implementations}
 \label{sec:supp-baselines}
 
@@ -317,42 +326,11 @@ We compare all methods under the same conditions, so that differences in accurac
   \item \textbf{AdaAlloc}~\cite{an2026adaalloc}: re-implemented from its paper, with SigLIP~2 similarities in place of its PE-Core scores. Since it makes three VLM calls per question, we scale the token budget of each call so that its total compute matches that of the other methods.
 \end{itemize}
 
-% Declared at the end of B.3 so that Table 5 is placed at the top of the column that holds C.2.
-\begin{table}[t]
-  \centering
-  \footnotesize
-  \setlength{\tabcolsep}{3.4pt}
-  \renewcommand{\arraystretch}{1.15}
-  \begin{tabular}{r r r r r r r}
-    \toprule
-    \multirow{2}{*}{Frames} & \multicolumn{4}{c}{Solving time (s)} & \multicolumn{2}{c}{Objective} \\
-    \cmidrule(lr){2-5}\cmidrule(lr){6-7}
-    & Gurobi~\cite{gurobi} & SCIP~\cite{scip} & CVXPY~\cite{cvxpy} & Ours & Gurobi & Ours \\
-    \midrule
-    30    & 0.04 & 1.9  & 0.010 & 0.006 & 0.698 & 0.698 \\
-    60    & 0.03 & 4.0  & 0.013 & 0.007 & 0.679 & 0.679 \\
-    120   & 0.09 & 9.7  & 0.039 & 0.009 & 0.595 & 0.595 \\
-    240   & 0.20 & 23.9 & 0.040 & 0.031 & 0.607 & 0.607 \\
-    420   & 0.56 & 51.7 & 0.080 & 0.025 & 0.635 & 0.635 \\
-    1,800 & 3.01 & 600+ & 0.76  & 0.13  & 0.456 & 0.456 \\
-    3,600 & 5.03 & 600+ & 1.79  & 0.26  & 0.461 & 0.461 \\
-    \bottomrule
-  \end{tabular}
-  \caption{\textbf{\name solves the allocation problem quickly and near-optimally.} Solving time of iterative water-filling (Ours) and three state-of-the-art off-the-shelf solvers, and the objective value of \cref{eq:supp-allocation} reached by Gurobi's integer optimum and by iterative water-filling.}
-  \label{tab:supp-solver}
-\end{table}
 
 \section{Additional Results}
 \label{sec:supp-results}
 
-% Fig. 10 and Fig. 11 go to the top of the page after C.1 and C.2, above the end of C.3.
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\linewidth]{fig/category_radar.pdf}
-  \caption{\textbf{\name achieves the highest accuracy in most question categories of Video-MME and MLVU.} Accuracy (\%) per question category as defined by each benchmark, with question counts in parentheses. Video-MME's 12 task types are grouped into six as in Q-Frame~\cite{zhang2025qframe}.}
-  \label{fig:supp-radar}
-\end{figure*}
-
+% Declared at the start of C so that Fig. 11 takes the top of the page that holds C.3.
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\linewidth]{fig/sens_panels.pdf}
@@ -360,15 +338,43 @@ We compare all methods under the same conditions, so that differences in accurac
   \label{fig:supp-sens}
 \end{figure*}
 
+
 \subsection{Per-Category Accuracy}
 \label{sec:supp-category}
 
-\Cref{fig:supp-radar} breaks down the accuracy in Tab.~1 of the main paper by question category. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, and its largest gains are on reasoning questions (4.2 and 6.8 points over the best baseline with Qwen3-VL-8B and InternVL3.5-4B, respectively). On MLVU, \name achieves the highest accuracy in six of the seven tasks with Qwen3-VL-8B (one tied with Q-Frame) and in four with InternVL3.5-4B. The gains of \name thus hold across question categories and do not come from a single one.
+\Cref{fig:supp-radar} breaks down the accuracy in Tab.~1 of the main paper by question category. Across the three benchmarks, \name achieves the highest accuracy in more categories than any baseline. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, and its largest gains are on reasoning questions (4.2 and 6.8 points over the best baseline with Qwen3-VL-8B and InternVL3.5-4B, respectively). On MLVU, \name achieves the highest accuracy in six of the seven tasks with Qwen3-VL-8B (one tied with Q-Frame) and in four with InternVL3.5-4B. The gains of \name thus hold across question categories and do not come from a single one.
 
 \subsection{Solver Efficiency}
 \label{sec:supp-solver}
 
-We compare iterative water-filling with three state-of-the-art off-the-shelf solvers. Gurobi~\cite{gurobi} and SCIP~\cite{scip} are integer solvers that solve the discrete allocation problem to optimality, and CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel} solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi, while SCIP does not finish beyond 420 frames. Iterative water-filling also matches the objective value of Gurobi's integer optimum to three decimals.
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{2.6pt}
+  \renewcommand{\arraystretch}{1.1}
+  \begin{tabular}{l r r r r r r r}
+    \toprule
+    Frames & 30 & 60 & 120 & 240 & 420 & 1,800 & 3,600 \\
+    \midrule
+    \multicolumn{8}{l}{\textit{Solving time (s)}} \\
+    Gurobi & 0.038 & 0.031 & 0.089 & 0.199 & 0.557 & 3.013 & 5.029 \\
+    SCIP   & 1.943 & 3.989 & 9.655 & 23.927 & 51.662 & 600+ & 600+ \\
+    CVXPY  & 0.010 & 0.013 & 0.039 & 0.040 & 0.080 & 0.763 & 1.794 \\
+    Ours   & \textbf{0.006} & \textbf{0.007} & \textbf{0.009} & \textbf{0.031} & \textbf{0.025} & \textbf{0.132} & \textbf{0.256} \\
+    \midrule
+    \multicolumn{8}{l}{\textit{Objective}} \\
+    Gurobi & 0.698 & 0.679 & 0.595 & 0.607 & 0.635 & 0.456 & 0.461 \\
+    SCIP   & 0.698 & 0.679 & 0.595 & 0.607 & 0.635 & 0.000 & 0.083 \\
+    CVXPY  & 0.698 & 0.679 & 0.596 & 0.607 & 0.636 & 0.457 & 0.461 \\
+    Ours   & 0.698 & 0.679 & 0.595 & 0.607 & 0.635 & 0.456 & 0.461 \\
+    \bottomrule
+  \end{tabular}
+  \caption{\textbf{\name solves the allocation problem quickly and near-optimally.} Solving time and objective value of \cref{eq:supp-allocation} for iterative water-filling (Ours) and three off-the-shelf solvers. Gurobi and SCIP solve the integer problem, and SCIP runs marked 600+ report the best solution found within 600\,s. CVXPY solves the continuous relaxation, whose objective bounds the integer optimum from above.}
+  \label{tab:supp-solver}
+\end{table}
+
+
+We compare iterative water-filling with three state-of-the-art off-the-shelf solvers. Gurobi~\cite{gurobi} and SCIP~\cite{scip} are integer solvers that solve the discrete allocation problem to optimality, and CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel} solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi, while SCIP does not finish beyond 420 frames. Iterative water-filling also matches the objective value of Gurobi's integer optimum to three decimals and stays within 0.001 of the upper bound given by the continuous relaxation.
 
 \subsection{Sensitivity Analysis}
 \label{sec:supp-sens}
