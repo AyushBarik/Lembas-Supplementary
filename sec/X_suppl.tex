@@ -27,6 +27,33 @@ where the allocation-dependent relevance $r_i(q,\mathbf b)$ discounts the retrie
 \end{equation}
 Here, $s_{ij}$ is the cosine similarity between the embeddings of items $i$ and $j$, and $\eta\ge0$ is the redundancy penalty.
 
+\subsection{NP-Hardness of the Discrete Problem}
+\label{sec:supp-nphard}
+
+The VLM consumes whole tokens, so the allocation problem of \cref{eq:supp-allocation} is originally discrete: every token count $b_i$ is an integer in $\{0,1,\dots,b_i^{\max}\}$. We show that this discrete problem is NP-hard, so that no polynomial-time algorithm solves it exactly unless $\mathrm{P}=\mathrm{NP}$. The hardness holds even when every item has a single token, in which case allocation reduces to selection. As in \cref{eq:supp-allocation}, an instance specifies the embeddings only through their similarities $s_{ij}$.
+
+\smallskip
+\noindent\textbf{Proposition 2.} \textit{Maximizing \cref{eq:supp-allocation} over integer token counts $b_i\in\{0,1,\dots,b_i^{\max}\}$ is NP-hard.}
+
+\begin{proof}
+We reduce from the independent set problem, which is NP-complete~\cite{karp1972,garey1979}: given a graph $G=(V,E)$ with $n$ vertices and an integer $k$, decide whether $G$ contains $k$ vertices of which no two are adjacent.
+
+Given $G$ and $k$, we construct an instance with one frame per vertex and no subtitles. Every frame has $b_i^{\max}=1$, $\tau_i=1$, and retrieval relevance $r_i(q)=1/n$, and we set $\eta=1/n$ and $B=k$. The similarities are $s_{ii}=1$, $s_{ij}=1/n$ if $\{i,j\}\in E$, and $s_{ij}=0$ otherwise, i.e., $\mathbf S=\mathbf I+\mathbf A/n$, where $\mathbf A$ is the adjacency matrix of $G$. Every eigenvalue of $\mathbf A$ has magnitude at most the maximum degree, which is at most $n-1$, so every eigenvalue of $\mathbf S$ is positive. $\mathbf S$ is, therefore, positive definite with unit diagonal, i.e., the Gram matrix of $n$ unit vectors, whose cosine similarities are exactly $s_{ij}$. The construction takes polynomial time.
+
+In this instance, each frame receives either no token, with token value $0$, or one token, with token value $v_i(1)=1/2$. Let $X$ be the set of frames that receive a token, and let $e(X)$ be the number of edges of $G$ with both endpoints in $X$. The budget requires $|X|\le k$, and the objective of \cref{eq:supp-allocation} becomes
+\begin{equation}
+\begin{aligned}
+  J(X)&=\frac{|X|}{2n}-\frac{1}{4n}\sum_{i,j\in X}s_{ij}
+       =\frac{|X|}{2n}-\frac{|X|}{4n}-\frac{e(X)}{2n^2}\\
+      &=\frac{|X|}{4n}-\frac{e(X)}{2n^2} .
+\end{aligned}
+\label{eq:supp-nphard}
+\end{equation}
+Since $e(X)\ge0$ and $|X|\le k$, every feasible allocation satisfies $J(X)\le k/(4n)$, with equality if and only if $|X|=k$ and $e(X)=0$, i.e., if and only if $X$ is an independent set of size $k$. Hence, $G$ contains an independent set of size $k$ if and only if the optimal value of the discrete problem is $k/(4n)$. A polynomial-time algorithm for the discrete problem would thus decide the independent set problem in polynomial time, which completes the proof.
+\end{proof}
+
+\noindent The construction relies on the redundancy penalty, which couples the items: without it ($\eta=0$), giving one token to any $k$ frames is optimal. In the continuous relaxation, the same coupling still yields a convex program, because $\mathbf S$ is positive semidefinite (\cref{sec:supp-convex}). \name, therefore, solves the relaxation and rounds its solution down to whole tokens.
+
 \subsection{Convexity of the Continuous Relaxation}
 \label{sec:supp-convex}
 
@@ -306,16 +333,15 @@ We compare all methods under the same conditions, so that differences in accurac
 \section{Additional Results}
 \label{sec:supp-results}
 
-% Fig. 10 and Fig. 11 form a float page between C.1/C.2 and C.3 (the \clearpage before C.3 releases it).
-% As top floats they left room for only a few lines of C.3 below them, which split that paragraph over two pages.
-\begin{figure*}[p]
+% Fig. 10 and Fig. 11 go to the top of the page after C.1 and C.2, above the end of C.3.
+\begin{figure*}[t]
   \centering
   \includegraphics[width=\linewidth]{fig/category_radar.pdf}
   \caption{\textbf{\name achieves the highest accuracy in most question categories of Video-MME and MLVU.} Accuracy (\%) per question category; columns are benchmarks and rows are VLMs, and each benchmark shares one radial scale across both VLMs. Numbers in parentheses are question counts. Video-MME groups its 12 task types into six as in Q-Frame~\cite{zhang2025qframe}; LongVideoBench uses its 17 question categories.}
   \label{fig:supp-radar}
 \end{figure*}
 
-\begin{figure*}[p]
+\begin{figure*}[t]
   \centering
   \includegraphics[width=\linewidth]{fig/sens_panels.pdf}
   \caption{\textbf{\name is robust to its manually chosen settings.} Accuracy against compute when varying (a) the attention weight $\omega$ on MT-Video-Bench, (b) the subtitle weight $\beta$ on Video-MME, and (c) the relevance temperature $T$ on Video-MME, with all other settings fixed. The sweeps use subsets of 200 conversations (a), 150 questions (b), and 300 questions (c).}
@@ -332,8 +358,7 @@ We compare all methods under the same conditions, so that differences in accurac
 
 We compare iterative water-filling with three off-the-shelf solvers. Gurobi~\cite{gurobi} and SCIP~\cite{scip} are integer solvers that solve the discrete allocation problem to optimality, and CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel} solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames with 64-dimensional frame embeddings and a time limit of 10 minutes. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi, while SCIP does not finish within the time limit beyond 420 frames. The objective of iterative water-filling stays within 0.04\% of the integer optimum. With the 1,152-dimensional embeddings of SigLIP~2, Gurobi takes 12.7 seconds for 3,600 frames, whereas iterative water-filling takes 0.24 seconds.
 
-\clearpage  % releases the float page of Fig. 10 and Fig. 11
 \subsection{Sensitivity Analysis}
 \label{sec:supp-sens}
 
-\name has three manually chosen settings, namely the attention weight $\omega$, the subtitle weight $\beta$, and the relevance temperature $T$. \Cref{fig:supp-sens} varies each setting while keeping the other settings fixed. For the attention weight (\cref{fig:supp-sens}a), every $\omega>0$ improves over retrieval relevance alone ($\omega=0$) in both accuracy and compute, and the accuracies for $\omega>0$ differ by less than one point. For the subtitle weight (\cref{fig:supp-sens}b), $\beta=0$ gives no tokens to subtitles and reduces accuracy by 12 points, whereas the accuracies for $\beta>0$ stay within 2 points of each other. For the relevance temperature (\cref{fig:supp-sens}c), accuracy is highest at the default $T=0.63$, remains within one point at $T=1$, and drops by about 3 points when $T$ is much smaller or larger. \name is, therefore, robust to $\omega$ and $\beta$ over a wide range, and to $T$ near its default value.
+\name has three manually chosen settings, namely the attention weight $\omega$, the subtitle weight $\beta$, and the relevance temperature $T$. \Cref{fig:supp-sens} varies each setting while keeping the other settings fixed. For the attention weight (\cref{fig:supp-sens}a), every $\omega>0$ improves over retrieval relevance alone ($\omega=0$) in both accuracy and compute, and the accuracies for $\omega>0$ differ by less than one point. For the subtitle weight (\cref{fig:supp-sens}b), the accuracies for $\beta>0$ stay within 2 points of each other. With $\beta=0$, no subtitle receives tokens and the prompt contains no subtitles at all, which reduces accuracy by 12 points. This setting differs from the ``w/o text allocation'' row of Tab.~2 of the main paper, which still shows the subtitles aligned with the selected frames, as for the baselines. For the relevance temperature (\cref{fig:supp-sens}c), accuracy is highest at the default $T=0.63$, remains within one point at $T=1$, and drops by about 3 points when $T$ is much smaller or larger. \name is, therefore, robust to $\omega$ and $\beta$ over a wide range, and to $T$ near its default value.
