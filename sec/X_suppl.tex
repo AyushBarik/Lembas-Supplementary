@@ -36,7 +36,7 @@ The VLM consumes whole tokens, so the allocation problem of \cref{eq:supp-alloca
 \noindent\textbf{Proposition 2.} \textit{Maximizing \cref{eq:supp-allocation} over integer token counts is NP-hard, even when every item has a single token.}
 
 \smallskip
-We reduce from the independent set problem, which is NP-complete~\cite{karp1972,garey1979}: given a graph $G=(V,E)$ with $n$ vertices and an integer $k$, decide whether $G$ contains $k$ vertices of which no two are adjacent. The idea is that the redundancy penalty acts as a penalty on the edges of $G$. Each vertex becomes a frame, and two adjacent frames that both receive a token lower the objective, so the best $k$ frames form an independent set whenever one exists.
+We reduce from the independent set problem, which is NP-complete~\cite{karp1972,garey1979}: given a graph $G=(V,E)$ with $n$ vertices and an integer $k$, decide whether $G$ contains $k$ vertices, no two of which are adjacent. The idea is that the redundancy penalty acts as a penalty on the edges of $G$. Each vertex becomes a frame, and two adjacent frames that both receive a token lower the objective, so the best $k$ frames form an independent set whenever one exists.
 
 \begin{proof}
 \textit{Construction.} Given $G$ and $k$, we build an instance with one frame per vertex and no subtitles:
@@ -49,7 +49,7 @@ We reduce from the independent set problem, which is NP-complete~\cite{karp1972,
 \end{equation}
 where $\mathbf A$ is the adjacency matrix of $G$. Two adjacent frames thus have similarity $1/n$, and all other pairs have similarity $0$. The construction takes polynomial time.
 
-\textit{Validity.} The objective depends on the embeddings only through their cosine similarities, so it suffices that $\mathbf S$ is the matrix of cosine similarities of some unit vectors. Every eigenvalue of $\mathbf A$ has magnitude at most the maximum degree of $G$, which is at most $n-1$, so every eigenvalue of $\mathbf S$ is at least $1/n>0$. $\mathbf S$ is, therefore, positive definite with unit diagonal, i.e., the Gram matrix of $n$ unit vectors.
+\textit{Validity.} The objective depends on the embeddings only through their cosine similarities, so it suffices that $\mathbf S$ is the matrix of cosine similarities of some unit vectors. Every eigenvalue of $\mathbf A$ has magnitude at most the maximum degree of $G$, which is at most $n-1$, so every eigenvalue of $\mathbf S$ is at least $1/n>0$. Therefore, $\mathbf S$ is positive definite with unit diagonal, i.e., it is the Gram matrix of $n$ unit vectors.
 
 \textit{Objective.} Each frame receives either no token, with token value $0$, or one token, with token value $v_i(1)=1/2$. Let $X$ be the set of frames that receive a token, and let $e(X)$ be the number of edges of $G$ with both endpoints in $X$. The budget requires $|X|\le k$, and the objective of \cref{eq:supp-allocation} becomes
 \begin{equation}
@@ -64,7 +64,7 @@ where $\mathbf A$ is the adjacency matrix of $G$. Two adjacent frames thus have 
 \textit{Correctness.} If $G$ contains an independent set of size $k$, giving one token to each of its frames is feasible and attains $J=k/(4n)$. Conversely, every feasible allocation satisfies $J(X)\le|X|/(4n)\le k/(4n)$, with equality only if $|X|=k$ and $e(X)=0$, i.e., only if $X$ is an independent set of size $k$. Hence, $G$ contains an independent set of size $k$ if and only if the discrete problem reaches $\theta=k/(4n)$. A polynomial-time algorithm for the discrete problem would thus decide the independent set problem in polynomial time.
 \end{proof}
 
-\noindent The construction relies on the redundancy penalty, which couples the items: without it ($\eta=0$), giving one token to any $k$ frames is optimal. In the continuous relaxation, the same coupling still yields a convex program, because $\mathbf S$ is positive semidefinite (\cref{sec:supp-convex}). \name, therefore, solves the relaxation and rounds its solution down to whole tokens.
+\noindent The construction relies on the redundancy penalty, which couples the items: without it ($\eta=0$), giving one token to any $k$ frames is optimal. In the continuous relaxation, the same coupling still yields a convex program, because $\mathbf S$ is positive semidefinite (\cref{sec:supp-convex}). \name therefore solves the relaxation and rounds its solution down to whole tokens.
 
 \subsection{Convexity of the Continuous Relaxation}
 \label{sec:supp-convex}
@@ -89,7 +89,7 @@ The objective, in turn, is concave in the token values. Substituting \cref{eq:su
   J(\mathbf z)=\bar{\mathbf r}^{\top}\mathbf z-\eta\,\mathbf z^{\top}\mathbf S\mathbf z ,
 \label{eq:supp-quadratic}
 \end{equation}
-where $\bar r_i=r_i(q)$ for a frame and $\bar r_i=\beta\,r_i(q)$ for a subtitle, and the similarity matrix $\mathbf S$ is block-diagonal, with the frame similarity matrix and the $\beta$-scaled subtitle similarity matrix as its blocks. Each block contains the cosine similarities between the embeddings of one modality, including the diagonal entries $s_{ii}=1$. The frame block is, therefore, a Gram matrix of normalized embeddings and the subtitle block is a positive multiple of one, so $\mathbf S$ is positive semidefinite. Since $\eta\ge0$, $J$ is concave. Maximizing $J$ over $\mathcal Z$ is thus a convex program, in which every local maximum is a global maximum~\cite{boyd2004}.
+where $\bar r_i=r_i(q)$ for a frame and $\bar r_i=\beta\,r_i(q)$ for a subtitle, and the similarity matrix $\mathbf S$ is block-diagonal, with the frame similarity matrix and the $\beta$-scaled subtitle similarity matrix as its blocks. Each block contains the cosine similarities between the embeddings of one modality, including the diagonal entries $s_{ii}=1$. The frame block is therefore a Gram matrix of normalized embeddings and the subtitle block is a positive multiple of one, so $\mathbf S$ is positive semidefinite. Since $\eta\ge0$, $J$ is concave. Maximizing $J$ over $\mathcal Z$ is thus a convex program, in which every local maximum is a global maximum~\cite{boyd2004}.
 
 \subsection{Derivation of Water-Filling}
 \label{sec:supp-waterfill}
@@ -232,7 +232,7 @@ An optimal allocation requires equal marginal gains for the two items, $\bar r_i
 
 \noindent Intuitively, the more relevant of the two items still gains more from its next token, so moving one token to it raises the objective.
 
-In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the unique maximizer and, therefore, attains a strictly higher objective within the same budget.
+In both cases, the water-filling allocation of \cref{eq:supp-waterfill} is the unique maximizer and therefore attains a strictly higher objective within the same budget.
 
 \section{Implementation Details}
 \label{sec:supp-impl}
@@ -307,7 +307,7 @@ The best answer is:
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\linewidth]{fig/category_radar.pdf}
-  \caption{\textbf{\name achieves the highest accuracy in more question categories than any baseline.} Accuracy (\%) per question category as defined by each benchmark, with question counts in parentheses. Video-MME's 12 task types are grouped into six as in Q-Frame~\cite{zhang2025qframe}.}
+  \caption{\textbf{\name achieves the highest accuracy in more question categories than any baseline.} Accuracy (\%) per question category, with question counts in parentheses.}
   \label{fig:supp-radar}
 \end{figure*}
 
@@ -342,7 +342,7 @@ We compare all methods under the same conditions, so that differences in accurac
 \subsection{Per-Category Accuracy}
 \label{sec:supp-category}
 
-\Cref{fig:supp-radar} breaks down the accuracy in Tab.~1 of the main paper by question category. Across the three benchmarks, \name achieves the highest accuracy in more categories than any baseline. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, and its largest gains are on reasoning questions (4.2 and 6.8 points over the best baseline with Qwen3-VL-8B and InternVL3.5-4B, respectively). On MLVU, \name achieves the highest accuracy in six of the seven tasks with Qwen3-VL-8B (one tied with Q-Frame) and in four with InternVL3.5-4B. The gains of \name thus hold across question categories and do not come from a single one.
+\Cref{fig:supp-radar} breaks down the accuracy in Tab.~1 of the main paper by question category, where the 12 task types of Video-MME are grouped into six as in Q-Frame~\cite{zhang2025qframe}. Across the three benchmarks, \name achieves the highest accuracy in more categories than any baseline. On Video-MME, \name achieves the highest accuracy in five of the six task groups with both VLMs, and its largest gains are on reasoning questions (4.2 and 6.8 points over the best baseline with Qwen3-VL-8B and InternVL3.5-4B, respectively). On MLVU, \name achieves the highest accuracy in six of the seven tasks with Qwen3-VL-8B (one tied with Q-Frame) and in four with InternVL3.5-4B. The gains of \name thus hold across question categories and do not come from a single one.
 
 \subsection{Solver Efficiency}
 \label{sec:supp-solver}
@@ -369,14 +369,14 @@ We compare all methods under the same conditions, so that differences in accurac
     Ours   & 0.698 & 0.679 & 0.595 & 0.607 & 0.635 & 0.456 & 0.461 \\
     \bottomrule
   \end{tabular}
-  \caption{\textbf{\name solves the allocation problem quickly and near-optimally.} Solving time and objective value of \cref{eq:supp-allocation} for iterative water-filling (Ours) and three off-the-shelf solvers. Gurobi and SCIP solve the integer problem, and SCIP runs marked 600+ report the best solution found within 600\,s. CVXPY solves the continuous relaxation, whose objective bounds the integer optimum from above.}
+  \caption{\textbf{\name solves the allocation problem quickly and near-optimally.} Solving time and objective value of iterative water-filling (Ours) and three off-the-shelf solvers.}
   \label{tab:supp-solver}
 \end{table}
 
 
-We compare iterative water-filling with three state-of-the-art off-the-shelf solvers. Gurobi~\cite{gurobi} and SCIP~\cite{scip} are integer solvers that solve the discrete allocation problem to optimality, and CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel} solves the same continuous relaxation as iterative water-filling. We use synthetic videos of 30 to 3,600 candidate frames. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi, while SCIP does not finish beyond 420 frames. Iterative water-filling also matches the objective value of Gurobi's integer optimum to three decimals and stays within 0.001 of the upper bound given by the continuous relaxation.
+We compare iterative water-filling with three state-of-the-art off-the-shelf solvers on synthetic videos of 30 to 3,600 candidate frames. Gurobi~\cite{gurobi} and SCIP~\cite{scip} are integer solvers that solve the discrete allocation problem to optimality. CVXPY~\cite{cvxpy} with the Clarabel solver~\cite{clarabel} solves the same continuous relaxation as iterative water-filling, so its objective value is an upper bound on the integer optimum. As shown in \cref{tab:supp-solver}, iterative water-filling is 1.3--7$\times$ faster than CVXPY and 4--23$\times$ faster than Gurobi. SCIP does not finish within 600\,s beyond 420 frames, and \cref{tab:supp-solver} reports the best solution it finds by then. Iterative water-filling also matches Gurobi's integer optimum to three decimals and stays within 0.001 of the upper bound.
 
 \subsection{Sensitivity Analysis}
 \label{sec:supp-sens}
 
-We study how the performance of \name changes with three hyperparameters, namely the attention weight $\omega$, the subtitle weight $\beta$, and the relevance temperature $T$. \Cref{fig:supp-sens} varies each hyperparameter while keeping the others fixed. For the attention weight (\cref{fig:supp-sens}a), every $\omega>0$ improves over retrieval relevance alone ($\omega=0$) in both accuracy and compute, and the accuracies for $\omega>0$ differ by less than one point. For the subtitle weight (\cref{fig:supp-sens}b), the accuracies for $\beta>0$ stay within 2 points of each other. With $\beta=0$, no subtitle receives tokens and the prompt contains no subtitles at all, which reduces accuracy by 12 points. This setting differs from the ``w/o text allocation'' row of Tab.~2 of the main paper, which still shows the subtitles aligned with the selected frames, as for the baselines. For the relevance temperature (\cref{fig:supp-sens}c), accuracy is highest at the default $T=0.63$, remains within one point at $T=1$, and drops by about 3 points when $T$ is much smaller or larger. \name is, therefore, robust to $\omega$ and $\beta$ over a wide range, and to $T$ near its default value.
+We study how the performance of \name changes with three hyperparameters, namely the attention weight $\omega$, the subtitle weight $\beta$, and the relevance temperature $T$. \Cref{fig:supp-sens} varies each hyperparameter while keeping the others fixed. For the attention weight (\cref{fig:supp-sens}a), every $\omega>0$ improves over retrieval relevance alone ($\omega=0$) in both accuracy and compute, and the accuracies for $\omega>0$ differ by less than one point. For the subtitle weight (\cref{fig:supp-sens}b), the accuracies for $\beta>0$ stay within 2 points of each other. With $\beta=0$, no subtitle receives tokens and the prompt contains no subtitles at all, which reduces accuracy by 12 points. This setting differs from the ``w/o text allocation'' row of Tab.~2 of the main paper, which still shows the subtitles aligned with the selected frames, as for the baselines. For the relevance temperature (\cref{fig:supp-sens}c), accuracy is highest at the default $T=0.63$, remains within one point at $T=1$, and drops by about 3 points when $T$ is much smaller or larger. \name is therefore robust to $\omega$ and $\beta$ over a wide range, and to $T$ near its default value.
