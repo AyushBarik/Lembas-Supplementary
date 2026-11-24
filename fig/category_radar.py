@@ -37,7 +37,7 @@ BENCH = [  # (csv, title, groups clockwise from the top as (csv key, label), sho
       ("Counting Problem", "Counting"), ("OCR Problems", "OCR"), ("Information Synopsis", "Synopsis")], True, 6),
     ("lvb", "LongVideoBench",
      [(k, k) for k in ["S2E", "S2O", "S2A", "E2O", "O2E", "T2E", "T2O", "T2A",
-                       "E3E", "O3O", "SSS", "SOS", "SAA", "T3E", "T3O", "TOS", "TAA"]], False, 5.5),
+                       "E3E", "O3O", "SSS", "SOS", "SAA", "T3E", "T3O", "TOS", "TAA"]], True, 5),
     ("mlvu", "MLVU",
      [("plotQA", "PlotQA"), ("needle", "Needle"), ("ego", "Ego"), ("count", "Count"), ("order", "Order"),
       ("anomaly_reco", "Anomaly"), ("topic_reasoning", "Topic")], True, 6),
