@@ -66,35 +66,10 @@ where $\mathbf A$ is the adjacency matrix of $G$. Two adjacent frames thus have 
 
 \noindent The construction relies on the redundancy penalty, which couples the items: without it ($\eta=0$), giving one token to any $k$ frames is optimal. In the continuous relaxation, the same coupling still yields a convex program, because $\mathbf S$ is positive semidefinite (\cref{sec:supp-convex}). \name therefore solves the relaxation and rounds its solution down to whole tokens.
 
-\subsection{Convexity of the Continuous Relaxation}
-\label{sec:supp-convex}
-
-The continuous relaxation lets each token count $b_i$ take any real value in $[0,b_i^{\max}]$. We show that, after a change of variables, this relaxation maximizes a concave function over a convex set. Every later result relies on this property.
-
-We change variables from the token counts to the token values $z_i=v_i(b_i)$, and write $\mathbf b$ and $\mathbf z$ for the vectors over all items. Since $v_i$ is strictly increasing, this change of variables is invertible, with
-\begin{equation}
-  b_i=v_i^{-1}(z_i)=\frac{\tau_i z_i}{1-z_i} ,
-\label{eq:supp-inverse}
-\end{equation}
-where $0\le z_i\le z_i^{\max}=v_i(b_i^{\max})<1$.
-The budget $B$ therefore restricts the token values to the feasible set
-\begin{equation}
-  \mathcal Z=\Big\{\mathbf z:\ 0\le z_i\le z_i^{\max},\ \ \sum_{i}\frac{\tau_i z_i}{1-z_i}\le B\Big\} .
-\label{eq:supp-feasible}
-\end{equation}
-Each function $\tau_i z_i/(1-z_i)$ is convex on $[0,1)$, because its second derivative $2\tau_i/(1-z_i)^3$ is positive. The budget constraint thus keeps a convex function below $B$, so $\mathcal Z$ is convex, and it is compact because it is closed and bounded.
-
-The objective, in turn, is concave in the token values. Substituting \cref{eq:supp-cond} into \cref{eq:supp-allocation} gives
-\begin{equation}
-  J(\mathbf z)=\bar{\mathbf r}^{\top}\mathbf z-\eta\,\mathbf z^{\top}\mathbf S\mathbf z ,
-\label{eq:supp-quadratic}
-\end{equation}
-where $\bar r_i=r_i(q)$ for a frame and $\bar r_i=\beta\,r_i(q)$ for a subtitle, and the similarity matrix $\mathbf S$ is block-diagonal, with the frame similarity matrix and the $\beta$-scaled subtitle similarity matrix as its blocks. Each block contains the cosine similarities between the embeddings of one modality, including the diagonal entries $s_{ii}=1$. The frame block is therefore a Gram matrix of normalized embeddings and the subtitle block is a positive multiple of one, so $\mathbf S$ is positive semidefinite. Since $\eta\ge0$, $J$ is concave. Maximizing $J$ over $\mathcal Z$ is thus a convex program, in which every local maximum is a global maximum~\cite{boyd2004}.
-
 \subsection{Derivation of Water-Filling}
 \label{sec:supp-waterfill}
 
-We now derive the water-filling allocation of the main paper as the unique solution of the subproblem in which the relevance of each item is fixed to $\bar r_i>0$:
+We derive the water-filling allocation of the main paper as the unique solution of the subproblem in which the relevance of each item is fixed to $\bar r_i>0$:
 \begin{equation}
 \begin{aligned}
   \max_{\mathbf b}\quad & \sum_i \bar r_i\,\frac{b_i}{b_i+\tau_i}\\
@@ -135,9 +110,36 @@ Substituting \cref{eq:supp-waterfill} into \cref{eq:supp-lagrangian} gives the d
 \end{equation}
 If $\sum_i b_i^{\max}\le B$, the budget is not binding and every item receives its full token count. Otherwise, the dual optimum $\lambda^\star$ satisfies $g'(\lambda^\star)=0$, i.e., the allocation spends exactly the budget. Because of the clipping, this equation has no closed-form solution in general. However, each $b_i(\lambda)$ is continuous and non-increasing in $\lambda$, and all of them vanish once $\lambda\ge\max_i\bar r_i/\tau_i$. A bisection over $\lambda\in(0,\max_i\bar r_i/\tau_i]$ therefore finds $\lambda^\star$. Since the inner maximizer is unique, the resulting allocation $\mathbf b(\lambda^\star)$ is the unique solution of \cref{eq:supp-fixed}.
 
-\subsection{Proof of Proposition 1}
+\subsection{Convergence of Iterative Water-Filling}
 \label{sec:supp-convergence}
+\label{sec:supp-convex}
 
+We now prove Proposition~1 of the main paper, which bounds the gap between iterative water-filling and the global maximum of \cref{eq:supp-allocation}. We first show that the continuous relaxation is a convex program and then prove the bound.
+
+\paragraph{Convexity of the continuous relaxation.}
+The continuous relaxation lets each token count $b_i$ take any real value in $[0,b_i^{\max}]$. After a change of variables, this relaxation maximizes a concave function over a convex set.
+
+We change variables from the token counts to the token values $z_i=v_i(b_i)$, and write $\mathbf b$ and $\mathbf z$ for the vectors over all items. Since $v_i$ is strictly increasing, this change of variables is invertible, with
+\begin{equation}
+  b_i=v_i^{-1}(z_i)=\frac{\tau_i z_i}{1-z_i} ,
+\label{eq:supp-inverse}
+\end{equation}
+where $0\le z_i\le z_i^{\max}=v_i(b_i^{\max})<1$.
+The budget $B$ therefore restricts the token values to the feasible set
+\begin{equation}
+  \mathcal Z=\Big\{\mathbf z:\ 0\le z_i\le z_i^{\max},\ \ \sum_{i}\frac{\tau_i z_i}{1-z_i}\le B\Big\} .
+\label{eq:supp-feasible}
+\end{equation}
+Each function $\tau_i z_i/(1-z_i)$ is convex on $[0,1)$, because its second derivative $2\tau_i/(1-z_i)^3$ is positive. The budget constraint thus keeps a convex function below $B$, so $\mathcal Z$ is convex, and it is compact because it is closed and bounded.
+
+The objective, in turn, is concave in the token values. Substituting \cref{eq:supp-cond} into \cref{eq:supp-allocation} gives
+\begin{equation}
+  J(\mathbf z)=\bar{\mathbf r}^{\top}\mathbf z-\eta\,\mathbf z^{\top}\mathbf S\mathbf z ,
+\label{eq:supp-quadratic}
+\end{equation}
+where $\bar r_i=r_i(q)$ for a frame and $\bar r_i=\beta\,r_i(q)$ for a subtitle, and the similarity matrix $\mathbf S$ is block-diagonal, with the frame similarity matrix and the $\beta$-scaled subtitle similarity matrix as its blocks. Each block contains the cosine similarities between the embeddings of one modality, including the diagonal entries $s_{ii}=1$. The frame block is therefore a Gram matrix of normalized embeddings and the subtitle block is a positive multiple of one, so $\mathbf S$ is positive semidefinite. Since $\eta\ge0$, $J$ is concave. Maximizing $J$ over $\mathcal Z$ is thus a convex program, in which every local maximum is a global maximum~\cite{boyd2004}.
+
+\smallskip
 \noindent\textbf{Proposition 1} (restated)\textbf{.} \textit{Let $J^\star$ be the global maximum of \cref{eq:supp-allocation} over continuous token allocations, and let $J^{(\ell)}$ be the objective value after $\ell$ iterations of Algorithm~1 of the main paper. Then}
 \begin{equation}
   J^\star-J^{(\ell)}\le\frac{4\,\eta\,\sigma_{\max}D^2}{\ell+2}=O\Big(\frac{1}{\ell}\Big) ,
@@ -146,7 +148,7 @@ If $\sum_i b_i^{\max}\le B$, the budget is not binding and every item receives i
 \textit{where $\sigma_{\max}$ is the largest eigenvalue of the frame and $\beta$-scaled subtitle similarity matrices and $D$ is the diameter of the feasible token-value set under budget $B$.}
 
 \smallskip
-The proof follows the standard analysis of the Frank--Wolfe method~\cite{jaggi2013}, applied to the token values of \cref{sec:supp-convex}. It uses the gradient $\nabla J(\mathbf z)=\bar{\mathbf r}-2\eta\,\mathbf S\mathbf z$, which is the discounted relevance $\tilde{\mathbf r}$ of Eq.~(6) of the main paper, and the constant $C=2\eta\,\sigma_{\max}$, which bounds the curvature of $J$. The diameter $D$ is the largest distance between two points of $\mathcal Z$. The proof rests on two lemmas. The first bounds how far the current token values are from the optimum, and the second bounds how much one iteration improves the objective.
+The proof follows the standard analysis of the Frank--Wolfe method~\cite{jaggi2013}, applied to the token values $\mathbf z$. It uses the gradient $\nabla J(\mathbf z)=\bar{\mathbf r}-2\eta\,\mathbf S\mathbf z$, which is the discounted relevance $\tilde{\mathbf r}$ of Eq.~(6) of the main paper, and the constant $C=2\eta\,\sigma_{\max}$, which bounds the curvature of $J$. The diameter $D$ is the largest distance between two points of $\mathcal Z$. The proof rests on two lemmas. The first bounds how far the current token values are from the optimum, and the second bounds how much one iteration improves the objective.
 
 \begin{lemma}[Distance to the optimum]
 \label{lem:gap}
